@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.goods">
+	<!-- 리절트 맵 정의 -->
+	<resultMap id="goodsResult" type="goodsVO">
+		<result property="product_id" column="product_id" />
+		<result property="product_type1" column="product_type1" />
+		<result property="product_type2" column="product_type2" />
+		<result property="product_name" column="product_name" />
+		<result property="product_price" column="product_price" />
+		<result property="product_sale_price"
+			column="product_sale_price" />
+		<result property="product_count" column="product_count" />
+		<result property="product_fileName" column="fileName" />
+		<result property="product_contents" column="product_contents" />
+		<result property="product_date" column="product_date" />
+	</resultMap>
+
+	<resultMap id="imageResult" type="ImageFileVO">
+		<result property="product_id" column="product_id" />
+		<result property="fileName" column="fileName" />
+		<result property="credate" column="credate" />
+		<result property="image_id" column="image_id" />
+		<result property="fileType" column="fileType" />
+	</resultMap>
+
+
+
+
+	<select id="selectGoodsList" parameterType="String"
+		resultMap="goodsResult">
+        <![CDATA[
+         select t.*
+          from(
+			select g.*,d.fileName from t_shop_product g, t_product_image d
+        	where g.product_id=d.product_id 
+        	and d.filetype='main_image'
+            order by g.product_date desc)  t
+	             where   rowNum <16
+	    ]]>
+	</select>
+
+	<select id="selectGoodsDetailImage" resultMap="imageResult"
+		parameterType="String">
+	    <![CDATA[
+		    	select * from  t_product_image 
+		    	where product_id=#{product_id}
+    	]]>
+	</select>
+	
+	<select id="selectGoodsDetail" resultMap="goodsResult"
+		parameterType="String">
+	    <![CDATA[
+		     select g.*,d.fileName from t_shop_product g, t_product_image d
+	        where g.product_id=d.product_id
+	        and d.filetype='main_image'
+	        and g.product_id=#{product_id}
+	        order by g.product_id
+    	]]>
+	</select>
+
+	<select id="selectGoodsBySearchWord" resultMap="goodsResult"
+		parameterType="String">
+     <![CDATA[
+				select g.*,d.fileName from t_shop_product g, t_product_image d
+		    where g.product_id=d.product_id
+		    and d.filetype='main_image'
+		    and g.product_name like '%'|| #{searchWord} || '%'
+		    order by g.product_date desc
+		]]>
+	</select>
+
+	<select id="selectKeywordSearch" resultType="String"
+		parameterType="String">
+	    <![CDATA[
+        select product_name from t_shop_product 
+        where         
+        product_name like '%'|| #{keyword} || '%'
+        order by product_date desc
+		]]>
+	</select>
+
+
+</mapper>

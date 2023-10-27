@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.article">
+	<resultMap id="articlesResult" type="articleVO">
+		<result property="notice_No" column="notice_No" />
+		<result property="notice_Title" column="notice_Title" />
+		<result property="notice_Content" column="notice_Content" />
+		<result property="notice_Date" column="notice_Date" />
+		<result property="notice_ImageFile" column="notice_ImageFile" />
+		<result property="notice_Count" column="notice_Count" />
+		<result property="member_Id" column="member_Id" />
+	</resultMap>
+
+	<resultMap id="imgResult" type="imageVO">
+		<result property="image_No" column="image_No" />
+		<result property="image_Name" column="image_Name" />
+		<result property="notice_No" column="notice_No" />
+	</resultMap>
+
+
+
+	<select id="selectAllArticlesList" parameterType="java.util.Map"
+		resultMap="articlesResult">
+	<![CDATA[
+SELECT
+        notice_No,
+        member_Id,
+        notice_Title,
+        notice_Date,
+        notice_Count                             
+FROM T_SHOP_NOTICE
+           
+	]]>
+		<!-- WHERE recNum BETWEEN (#{section}-1)*100+(#{pageNum}-1)*10+1 AND (#{section}-1)*100+#{pageNum}*10 -->
+	</select>
+
+	<select id="selectTotArticles" resultType="int">
+		<![CDATA[  
+			select count(*) from T_SHOP_NOTICE
+		 ]]>
+	</select>
+
+	<select id="selectArticle" resultType="articleVO"
+		parameterType="int">
+    <![CDATA[
+      SELECT * from T_SHOP_NOTICE
+      where notice_No = #{notice_No}		
+    ]]>
+	</select>
+
+	<!-- <insert id="insertNewArticle" parameterType="java.util.Map"> <![CDATA[ 
+		INSERT INTO T_SHOP_NOTICE (notice_No, member_Id, notice_Title, notice_Content, 
+		notice_Count, notice_Date) VALUES (#{notice_No}, #{member_Id}, #{notice_Title}, 
+		#{notice_Content}, #{notice_Count}, SYSDATE) ]]> </insert> -->
+	<select id="selectNewArticleNO" resultType="int">
+		<![CDATA[
+			SELECT  nvl(max(notice_No), 0) + 1 from T_SHOP_NOTICE		
+		]]>
+	</select>
+
+	<select id="selectNewImageFileNO" resultType="int">
+    <![CDATA[
+      SELECT  nvl(max(IMAGE_NO),0) from T_NOTICE_IMAGE	
+    ]]>
+	</select>
+
+	<update id="updateViewCounts" parameterType="int">
+    <![CDATA[
+      update T_SHOP_NOTICE
+      set NOTICE_COUNT = NVL(NOTICE_COUNT, 0) + 1
+      where
+         notice_No=#{notice_No}
+    ]]>
+	</update>
+
+	<select id="selectImageFileList" resultMap="imgResult"
+		parameterType="int">
+    <![CDATA[
+      SELECT * from T_NOTICE_IMAGE
+      where notice_No=#{notice_No}
+      order by image_No
+    ]]>
+	</select>
+
+	<delete id="deleteArticle" parameterType="int">
+    <![CDATA[
+    DELETE FROM T_SHOP_NOTICE
+    WHERE notice_No = #{notice_No}
+          ]]>
+	</delete>
+
+	<insert id="insertNewArticle" parameterType="java.util.Map">
+    <![CDATA[
+insert into T_SHOP_NOTICE(notice_No, member_id, notice_title, notice_content, NOTICE_IMAGEFILE, notice_count)
+values(  #{notice_No},
+          #{member_Id}, 
+          #{notice_Title}, 
+          #{notice_Content}, 
+          #{notice_ImageFile},
+          0)
+    ]]>
+	</insert>
+
+
+	<insert id="insertNewImage" parameterType="java.util.Map">
+		<foreach item="item" collection="list" open="INSERT ALL"
+			separator=" " close="SELECT * FROM DUAL">
+			INTO T_NOTICE_IMAGE(image_No, image_Name,
+			notice_No, reg_Date)
+			VALUES (#{item.image_No},
+			#{item.image_Name},
+			#{item.notice_No},
+			sysdate)
+		</foreach>
+	</insert>
+
+	<delete id="deleteModImage" parameterType="imageVO">
+	    <![CDATA[
+	      delete from T_NOTICE_IMAGE
+	      where notice_No = #{notice_No}
+	      and image_No = #{image_No}
+	    ]]>
+	</delete>
+
+	<update id="updateArticle" parameterType="java.util.Map">
+		update T_SHOP_NOTICE
+		set notice_Title=#{notice_Title}
+		,notice_Content=#{notice_Content}
+		where NOTICE_NO=#{notice_No}
+	</update>
+
+	<insert id="insertModNewImage" parameterType="java.util.Map">
+		<foreach item="item" collection="list" open="INSERT ALL"
+			separator=" " close="SELECT * FROM DUAL">
+			INTO T_SHOP_IMAGE(image_No, image_Name,
+			notice_No, reg_Date)
+			VALUES (#{item.image_No},
+			#{item.image_Name},
+			#{item.notice_No},
+			sysdate)
+		</foreach>
+	</insert>
+
+	<update id="updateImageFile" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";"
+			open="DECLARE BEGIN" close="; END;">
+			<choose>
+				<when test="item.imageFileName != null ">
+					update T_NOTICE_IMAGE
+					set image_Name =
+					#{item.image_Name}
+					where
+					notice_No=#{item.notice_No}
+					and image_No =
+					#{item.image_No}
+				</when>
+				<otherwise>
+
+				</otherwise>
+			</choose>
+		</foreach>
+	</update>
+
+</mapper>

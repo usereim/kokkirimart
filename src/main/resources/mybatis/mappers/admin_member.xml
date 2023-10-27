@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.admin.member">
+	<resultMap id="memberResult" type="MemberVO">
+		<result property="member_id" column="member_id" />
+		<result property="member_pw" column="member_pw" />
+		<result property="member_name" column="member_name" />
+		<result property="member_gender" column="member_gender" />
+		
+		<result property="member_birth_y" column="member_birth_y" />
+		<result property="member_birth_m" column="member_birth_m" />
+		<result property="member_birth_d" column="member_birth_d" />
+
+		<result property="tel1" column="tel1" />
+		<result property="tel2" column="tel2" />
+		<result property="tel3" column="tel3" />
+		
+		<result property="hp1" column="hp1" />
+		<result property="hp2" column="hp2" />
+		<result property="hp3" column="hp3" />
+		<result property="smssts_yn" column="smssts_yn" />
+		<result property="email1" column="email1" />
+		<result property="email2" column="email2" />
+		<result property="emailsts_yn" column="emailsts_yn" />
+		
+		<result property="zipcode" column="zipcode" />
+		<result property="roadAddress" column="roadAddress" />
+		<result property="detailAddress" column="detailAddress" />
+
+		<result property="joinDate" column="joinDate" />
+		<result property="del_yn" column="del_yn" />
+	</resultMap>
+<!-- 아래의 listMember에서 SQLException 부적합한 열 1111 오류 발생 -->
+<!-- JDBC Type을 지정, 컬럼 확인 등 방법 이용 필요 -->
+<!-- adminMemberMain.jsp (화면) // AdminMemberControllerImpl.java (내부코드)  -->
+<!-- 애러지점 : AdminMemberDAOImpl.java // 
+listMember(HashMap condMap)메서드의 SQL을 실행하는 지점에서 오류.
+
+ArrayList<MemberVO>  memberList=(ArrayList)sqlSession.selectList("mapper.admin.member.listMember",condMap); -->
+<select id="listMember" resultMap="memberResult" parameterType="java.util.HashMap">
+    select * from (
+        select rowNum as recNum, t.*
+        from (
+            select * from T_SHOP_MEMBER 
+            where to_char(joinDate,'yyyy-mm-dd') between #{beginDate} and #{endDate}
+            <if test="search_type=='member_id'">
+                AND member_id=#{search_word}
+            </if>
+            <if test="search_type=='member_name'">
+                AND member_name=#{search_word}
+            </if>
+            <if test="search_type=='member_hp_num'">
+                AND hp1||hp2||hp3=#{search_word} 
+            </if>
+          order by joinDate desc
+      ) t
+  )							
+  where recNum between ((#{pageNum}-1)*10+1) and (#{pageNum}*10)
+</select>
+	
+    <select id="memberDetail" resultMap="memberResult"   parameterType="String"  >
+	    <![CDATA[
+		    select * from T_SHOP_MEMBER
+            where member_id=#{member_id}
+    	]]>
+	</select>	
+	
+
+	<update id="modifyMemberInfo" parameterType="java.util.HashMap">
+	   update T_SHOP_MEMBER
+			   <set>
+			      <if test=" member_pw!='' and member_pw!=null">
+			        member_pw=#{member_pw},
+			      </if>
+			      <if test=" member_gender!='' and member_gender!=null">
+			         member_gender=#{member_gender},
+			      </if>
+			       <if test=" member_birth_y!='' and member_birth_y!=null">
+			         member_birth_y=#{member_birth_y},
+			      </if>
+			      <if test=" member_birth_m!='' and member_birth_m!=null">
+			         member_birth_m=#{member_birth_m},
+			      </if>
+			      <if test=" member_birth_d!='' and member_birth_d!=null">
+			         member_birth_d=#{member_birth_d},
+			      </if>
+			      <if test=" tel1!='' and tel1!=null">
+			         tel1=#{tel1},
+			      </if>
+			      <if test=" tel2!='' and tel2!=null">
+			         tel2=#{tel2},
+			      </if>
+			      <if test=" tel3!='' and tel3!=null">
+			         tel3=#{tel3},
+			      </if>
+			      <if test=" hp1!='' and hp1!=null">
+			         hp1=#{hp1},
+			      </if>
+			      <if test=" hp2!='' and hp2!=null">
+			         hp2=#{hp2},
+			      </if>
+			      <if test=" hp3!='' and hp3!=null">
+			         hp3=#{hp3},
+			      </if>
+			      <if test=" smssts_yn!='' and smssts_yn!=null">
+			         smssts_yn=#{smssts_yn},
+			      </if>
+			      <if test=" email1!='' and email1!=null">
+			         email1=#{email1},
+			      </if>
+			      <if test=" email2!='' and email2!=null">
+			         email2=#{email2},
+			      </if>
+			      <if test=" emailsts_yn!='' and emailsts_yn!=null">
+			         emailsts_yn=#{emailsts_yn},
+			      </if>
+			      <if test=" zipcode!='' and zipcode!=null">
+			         zipcode=#{zipcode},
+			      </if>
+			      <if test=" roadAddress!='' and roadAddress!=null">
+			         roadAddress=#{roadAddress},
+			      </if>			     
+			      <if test=" detailAddress!='' and detailAddress!=null">
+			         detailAddress=#{detailAddress},
+			      </if>
+			      <if test=" del_yn!='' and del_yn!=null">
+			         del_yn=#{del_yn}
+			      </if>
+			   </set>
+		where 
+		member_id=#{member_id}
+	</update>	
+</mapper>

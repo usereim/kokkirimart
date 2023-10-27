@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+<settings>
+    <setting name="cacheEnabled" value="false" />
+    <setting name="jdbcTypeForNull" value="NULL" />
+</settings>
+
+  <typeAliases>
+    <typeAlias type="com.bookshop01.goods.vo.GoodsVO" alias="goodsVO" />
+    <typeAlias type="com.bookshop01.goods.vo.ImageFileVO" alias="imageFileVO" />
+    <typeAlias type="com.bookshop01.member.vo.MemberVO" alias="memberVO" />
+    <typeAlias type="com.bookshop01.cart.vo.CartVO" alias="cartVO" />
+    <typeAlias type="com.bookshop01.order.vo.OrderVO" alias="orderVO" />
+    <typeAlias type="com.bookshop01.mypage.vo.MyPageVO" alias="mypageVO" />
+    <typeAlias type="com.bookshop01.member.DTO.KakaoDTO" alias="kdto" />
+    <!-- 공지글 VO -->
+    <typeAlias type="com.bookshop01.notice.vo.ArticleVO" alias="articleVO"/>
+    <typeAlias type="com.bookshop01.notice.vo.ImageVO" alias="imageVO"/>
+    <typeAlias type="com.bookshop01.comment.vo.CommentVO" alias="CommentVO" />
+  </typeAliases>
+</configuration>

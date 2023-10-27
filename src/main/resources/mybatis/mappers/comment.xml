@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.comment">
+	<resultMap id="commentResult" type="commentVO">
+		<result property="commentNO" column="commentNO" />
+		<result property="content" column="content" />
+		<result property="id" column="id" />
+		<result property="articleNO" column="articleNO" />
+	</resultMap>
+
+	<select id="selectComment" resultMap="commentResult"
+		parameterType="int">
+		<![CDATA[
+			select * from t_comment where articleNO = #{articleNO}
+		]]>
+	</select>
+	
+	<select id="selectNewCommentNO" resultType="int">
+		<![CDATA[
+			SELECT  nvl(max(commentNO), 0) + 1 from t_comment		
+		]]>
+	</select>
+	
+	<insert id="insertNewComment" parameterType="java.util.Map">
+    <![CDATA[
+      insert into t_comment(commentNO, content, id, articleNO)
+      values(#{comment.commentNO}, #{comment.content}, #{comment.id}, #{comment.articleNO})
+    ]]>
+	</insert>
+</mapper>

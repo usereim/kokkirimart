@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.admin.goods">
+<!-- 리절트 맵 정의 -->	
+	<resultMap id="goodsResult" type="goodsVO">
+		<result property="product_id" column="product_id" />
+		<result property="product_name" column="product_name" />
+		<result property="product_price" column="product_price" />
+		<result property="product_sale_price" column="product_sale_price" />
+		<result property="product_type1" column="product_type1" />
+		<result property="product_content" column="product_content" javaType="java.lang.String" jdbcType="CLOB"  />
+	</resultMap>	
+
+	<resultMap id="imageResult" type="ImageFileVO">
+	   <result property="product_id" column="product_id" />
+	   <result property="fileName" column="fileName" />
+	   <result property="reg_id" column="reg_id" />
+	   <result property="image_id" column="image_id" />
+	   <result property="fileType" column="fileType" />
+	</resultMap>
+	
+	<resultMap id="orderGoodsResult" type="OrderVO">
+		<result property="order_seq_num" column="order_seq_num" />
+		<result property="order_id" column="order_id" />
+		<result property="member_id" column="member_id" />
+		<result property="product_id" column="product_id" />
+		<result property="product_name" column="product_name" />
+		<result property="order_price" column="order_price" />
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+
+		<result property="member_name" column="member_name" />
+		<result property="order_name" column="order_name" />
+		<result property="order_hp1" column="order_hp1" />
+		<result property="order_hp2" column="order_hp2" />
+		<result property="order_hp3" column="order_hp3" />
+
+		<result property="order_tel1" column="order_tel1" />
+		<result property="order_tel2" column="order_tel2" />
+		<result property="order_tel3" column="order_tel3" />
+		<result property="order_delivery_address"
+			column="order_delivery_address" />
+		<result property="order_message" column="order_message" />
+
+		<result property="order_type" column="order_type" />
+		<result property="pay_method" column="pay_method" />
+		<result property="card_com_name" column="card_com_name" />
+		<result property="pay_monthly" column="pay_monthly" />
+
+		<result property="order_date" column="order_date" />
+		<!-- <result property="delivery_state" column="delivery_state" /> -->
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+		<result property="fileName" column="fileName" />
+	</resultMap>
+	
+	<insert id="insertNewGoods" parameterType="java.util.Map">
+    <selectKey resultType="String" keyProperty="product_id" order="BEFORE">
+        select seq_product_id.nextval from dual
+    </selectKey>
+	    
+	   insert into t_shop_product(
+        product_id, 
+        product_name,
+        product_price,
+        product_sale_price,
+        product_contents)
+    values(
+          #{product_id},
+          #{product_name},
+          #{product_price},
+          #{product_sale_price},
+          #{product_contents}
+     )
+</insert>
+		<insert id="insertGoodsImageFile" parameterType="imageFileVO"   >
+		<selectKey resultType="int" keyProperty="image_id" order="BEFORE">
+	    	select seq_image_id.nextval from dual
+	    </selectKey>
+	    <![CDATA[
+		   insert into t_product_image (image_id,
+		                                     product_id,
+																				 fileName,
+																				 fileType,
+																				 reg_id)
+											   					values(#{image_id},
+											   					 			 #{product_id},
+											   							 	 #{fileName},
+											   								 #{fileType},
+											   								 #{reg_id} )
+		]]>
+	</insert> 
+	<select id="selectNewGoodsList" resultMap="goodsResult" parameterType="java.util.Map">
+    select * from (
+         select rowNum as recNum,
+              product_id,
+              product_name,
+              product_sale_price,
+              to_char(product_date,'YYYY-MM-DD')  as product_date
+           from t_shop_product 
+           where  to_char(product_date,'YYYY-MM-DD')  between #{beginDate} and #{endDate}
+           order by product_date desc
+        )                            
+    where                
+recNum between (#{section}-1)*100+ (#{pageNum}-1)*10+1 and (#{section}-1)*100+(#{pageNum})*10                  
+</select>
+	
+	<select id="selectOrderGoodsList" resultMap="orderGoodsResult"   parameterType="java.util.Map"  >
+		  select * from (
+			    select rowNum as recNum,t.*
+			       from (
+			              select  *  from t_shop_order 
+			              where to_char(pay_date,'yyyy-mm-dd')  between #{beginDate} and #{endDate}
+			                <if test="search_type=='orderer_id'">
+			                  AND orderer_id=#{search_word}
+			                </if>
+			                <if test="search_type=='member_name'">
+			                  AND member_name=#{search_word}
+			                </if>
+			              order by pay_date desc
+					    ) t
+				)							
+			where				
+		recNum between (#{section}-1)*100+ (#{pageNum}-1)*10+1 and (#{section}-1)*100+(#{pageNum})*10				        
+	</select>
+	
+ 
+
+	
+	<select id="selectGoodsDetail" resultMap="goodsResult" parameterType="String">
+    select * from t_shop_product g, t_product_image d
+    where g.product_id=d.product_id
+    and d.filetype='main_image'
+    and g.product_id=#{product_id}
+    order by g.product_id
+</select>
+	<select id="selectGoodsImageFileList" resultMap="imageResult" parameterType="String">
+    select * from  t_product_image 
+    where  
+        product_id=#{product_id}
+    order by image_id asc
+</select>
+	
+	
+<update id="updateGoodsInfo" parameterType="java.util.HashMap">
+   update t_shop_product
+   <set> 
+      <if test="product_type1!='' and product_type1!=null">
+        product_type1=#{product_type1},
+      </if>
+	      <if test=" product_name!='' and product_name!=null">
+	        product_name=#{product_name},
+	      </if>
+	      <if test=" product_price!='' and product_price!=null">
+	        product_price=#{product_price},
+	      </if>
+	      <if test=" product_sale_price!='' and product_sale_price!=null">
+	        product_sale_price=#{product_sale_price},
+	      </if>
+	      <if test=" product_contents!='' and product_content!=null">
+	        product_contents=#{product_contents:VARCHAR}
+	      </if>
+	     </set>
+	    where 
+   product_id=#{product_id}
+</update>	
+	<update id="updateGoodsImage" parameterType="imageFileVO">
+    update t_product_image
+    set fileName=#{fileName}
+    where	 
+        product_id=#{product_id} and image_id=#{image_id}
+</update>
+	
+	<delete id="deleteGoodsImage" parameterType="String">
+	  delete from t_product_image
+	  where image_id=#{image_id}
+	</delete>
+	
+	<delete id="deleteGoods" parameterType="String">
+	  delete from t_shop_product
+	  where product_id=#{product_id}
+	</delete>
+	
+<update id="updateOrderGoods" parameterType="java.util.HashMap" >
+	   update t_shop_order
+	    <set> 
+	      <if test=" delivery_state!='' and delivery_state!=null">
+	        delivery_state=#{delivery_state},
+	      </if>
+	      <if test=" order_detailaddress!='' and order_detailaddress!=null">
+	        order_detailaddress=#{order_detailaddress},
+	      </if>
+	    </set>
+	    where 
+	    order_id=#{order_id}
+	
+	</update>		
+</mapper>

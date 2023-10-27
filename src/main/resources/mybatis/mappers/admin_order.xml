@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.admin.order">
+<resultMap id="orderResult" type="OrderVO">
+		<result property="order_id" column="order_id" />
+		<result property="member_id" column="member_id" />
+		<result property="product_id" column="product_id" />
+		<result property="product_name" column="product_name" />
+		<result property="order_price" column="order_price" />
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+		
+		<result property="member_name" column="member_name" />
+		<result property="order_name" column="order_name" />
+		<result property="order_hp1" column="order_hp1" />
+		<result property="order_hp2" column="order_hp2" />
+		<result property="order_hp3" column="order_hp3" />
+		
+		<result property="order_tel1" column="order_tel1" />
+		<result property="order_tel2" column="order_tel2" />
+		<result property="order_tel3" column="order_tel3" />
+		<result property="order_detailaddress" column="order_detailaddress" />
+		<result property="order_message" column="order_message" />
+		
+		<result property="order_type" column="order_type" />
+		<result property="pay_method" column="pay_method" />
+		<result property="card_com_name" column="card_com_name" />
+		<result property="pay_monthly" column="pay_monthly" />
+		
+		<result property="pay_date" column="pay_date" />
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+		
+		<result property="filename" column="filename" />
+	</resultMap>
+  <resultMap id="memberResult" type="memberVO">
+		<result property="member_id" column="member_id" />
+		<result property="member_pw" column="member_pw" />
+		<result property="member_name" column="member_name" />
+		<result property="member_gender" column="member_gender" />
+		
+		<result property="member_birth_y" column="member_birth_y" />
+		<result property="member_birth_m" column="member_birth_m" />
+		<result property="member_birth_d" column="member_birth_d" />
+		
+		<result property="member_birth_gn" column="member_birth_gn" />
+		<result property="tel1" column="tel1" />
+		<result property="tel2" column="tel2" />
+		<result property="tel3" column="tel3" />
+		
+		<result property="hp1" column="hp1" />
+		<result property="hp2" column="hp2" />
+		<result property="hp3" column="hp3" />
+		<result property="smssts_yn" column="smssts_yn" />
+		<result property="email1" column="email1" />
+		<result property="email2" column="email2" />
+		<result property="emailsts_yn" column="emailsts_yn" />
+		
+		<result property="zipcode" column="zipcode" />
+		<result property="roadAddress" column="roadAddress" />
+		<result property="detailAddress" column="detailAddress" />
+		<result property="joinDate" column="joinDate" />
+	</resultMap>
+<select id="selectNewOrderList" resultMap="orderResult" parameterType="java.util.HashMap">
+    select * from (
+        select rowNum as recNum,t.*
+        from (
+            select o.*, p.pay_date 
+            from T_SHOP_ORDER o
+            join T_SHOP_PAY p on o.order_id = p.order_id
+            where to_char(p.pay_date,'yyyy-mm-dd') between #{beginDate} and #{endDate}
+                <if test="search_type=='orderer_id'">
+                    AND o.orderer_id=#{search_word}
+                </if>
+                <if test="search_type=='member_name'">
+                    AND o.member_name=#{search_word}
+                </if>
+            order by p.pay_date desc
+        ) t
+    )							
+where				
+recNum between (#{section}-1)*100+ (#{pageNum}-1)*10+1 and (#{section}-1)*100+(#{pageNum})*10				        
+</select>
+	
+<update id="updateDeliveryState" parameterType="java.util.Map" >
+	   update T_SHOP_ORDER
+	    <set> 
+	    </set>
+	    where 
+	    order_id=#{order_id}
+	</update>	
+	
+    <select id="selectOrderDetail" resultMap="orderResult"   parameterType="int"  >
+	    <![CDATA[
+		    select * from T_SHOP_ORDER
+            where order_id=#{order_id}
+    	]]>
+	</select>	
+	
+   <select id="selectOrderer" resultMap="memberResult"  parameterType="String"  >
+	    <![CDATA[
+			select * from T_SHOP_MEMBER 
+			where member_id=#{member_id}
+		]]>
+	</select>	
+</mapper>
+

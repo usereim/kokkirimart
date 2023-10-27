@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/bookshop01/member/controller/MemberControllerImpl.java=UTF-8
+encoding//src/main/java/com/bookshop01/notice/controller/ArticleControllerImpl.java=UTF-8
+encoding//src/main/webapp/WEB-INF/views/member/loginForm.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/mypage/myPageMain.jsp=UTF-8
+encoding/<project>=UTF-8

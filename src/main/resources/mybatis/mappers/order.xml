@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.order">
+	<!-- 리절트 맵 정의 -->
+	<resultMap id="orderGoodsResult" type="OrderVO">
+		<result property="order_seq_num" column="order_seq_num" />
+		<result property="order_id" column="order_id" />
+		<result property="member_id" column="member_id" />
+		<result property="product_id" column="product_id" />
+		<result property="product_name" column="product_name" />
+		<result property="order_price" column="order_price" />
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+
+		<result property="member_name" column="member_name" />
+		<result property="order_name" column="order_name" />
+		<result property="order_hp1" column="order_hp1" />
+		<result property="order_hp2" column="order_hp2" />
+		<result property="order_hp3" column="order_hp3" />
+
+		<result property="order_tel1" column="order_tel1" />
+		<result property="order_tel2" column="order_tel2" />
+		<result property="order_tel3" column="order_tel3" />
+		<result property="order_delivery_address"
+			column="order_delivery_address" />
+		<result property="order_message" column="order_message" />
+
+		<result property="order_type" column="order_type" />
+		<result property="pay_method" column="pay_method" />
+		<result property="card_com_name" column="card_com_name" />
+		<result property="pay_monthly" column="pay_monthly" />
+
+		<result property="order_date" column="order_date" />
+		<!-- <result property="delivery_state" column="delivery_state" /> -->
+		<result property="pay_account" column="pay_account" />
+		<result property="order_qty" column="order_qty" />
+		<result property="fileName" column="fileName" />
+	</resultMap>
+
+	<select id="selectMyOrderList" resultMap="orderGoodsResult"
+		parameterType="orderVO">
+	    <![CDATA[
+			select * from T_SHOP_ORDER
+			where to_char(pay_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') 
+        	and member_id=#{member_id}
+        	order by pay_date desc
+		]]>
+	</select>
+	<insert id="insertNewOrder" parameterType="orderVO">
+		<selectKey resultType="int" keyProperty="order_seq_num"
+			order="BEFORE">
+			select order_seq_num.nextval from dual
+		</selectKey>
+	    <![CDATA[
+			insert into T_SHOP_ORDER(order_seq_num,
+			                            order_id,
+										member_id,
+									    product_id,
+									    product_name,
+									    fileName,
+									    order_qty,
+									    order_price,
+									    member_name,
+									    order_name,
+									    order_hp1,
+					                    order_hp2,
+					                    order_hp3,
+					                    order_tel1,
+					                    order_tel2,
+					                    order_tel3,
+					                    order_delivery_address,
+					                    order_message,
+						                order_type,
+						                pay_method,
+						                card_com_name,
+						                pay_monthly)
+							     values(#{order_seq_num},
+							            #{order_id},
+									    #{member_id},
+									    #{product_id},
+									    #{product_name},
+									    #{fileName},
+									    #{order_qty},
+									    #{order_price},
+									    #{member_name},
+									    #{order_name},
+									    #{order_hp1},
+					                    #{order_hp2},
+					                    #{order_hp3},
+					                    #{order_tel1},
+					                    #{order_tel2},
+					                    #{order_tel3},
+					                    #{order_delivery_address},
+					                    #{order_message},
+						                #{order_type},
+						                #{pay_method},
+						                #{card_com_name},
+						                #{pay_monthly}
+						                )
+    	]]>
+	</insert>
+
+	<select id="selectOrderID" resultType="int">
+	    <![CDATA[
+		    select order_id.nextval from dual
+    	]]>
+	</select>
+
+	<select id="selectMyOrder" resultMap="orderGoodsResult"
+		parameterType="String">
+	    <![CDATA[
+		    select * from T_SHOP_ORDER
+            where to_char(pay_date,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd') 
+            and order_id=#{order_id}
+            order by pay_date desc
+    	]]>
+	</select>
+
+	<delete id="deleteGoodsFromCart" parameterType="orderVO">
+		delete from T_SHOP_CART
+		where product_id=#{product_id}
+	</delete>
+
+</mapper>
