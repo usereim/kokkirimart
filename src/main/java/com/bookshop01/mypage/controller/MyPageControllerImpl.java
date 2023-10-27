@@ -110,7 +110,7 @@ public class MyPageControllerImpl extends BaseController implements MyPageContro
 		ModelAndView mav = new ModelAndView();
 		myPageService.cancelOrder(order_id);
 		mav.addObject("message", "cancel_order");
-		mav.setViewName("redirect:/mypage/myPageMain.do");
+		mav.setViewName("redirect:/mypage/listMyOrderHistory.do");
 		return mav;
 	}
 

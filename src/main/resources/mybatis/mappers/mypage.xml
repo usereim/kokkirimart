@@ -69,7 +69,7 @@
 	</select>
 
 	<update id="updateMyInfo" parameterType="java.util.HashMap">
-		update t_shopping_member
+		update t_shop_member
 		<set>
 			<if test=" member_pw!='' and member_pw!=null">
 				member_pw=#{member_pw},
@@ -136,16 +136,15 @@
 	<select id="selectMyDetailInfo" resultType="memberVO"
 		parameterType="String">
 	    <![CDATA[
-			select * from t_shopping_member 
+			select * from t_shop_member 
 			where member_id=#{member_id}
     	]]>
 	</select>
 
-	<update id="updateMyOrderCancel" parameterType="String">
-		update t_shop_order
-		set delivery_state='cancel_order'
-		where order_id=#{order_id}
-	</update>
+	<delete id="updateMyOrderCancel" parameterType="String">
+		DELETE FROM t_shop_order
+		WHERE order_id = #{order_id}
+	</delete>
 
 	<select id="selectOrderById" parameterType="java.lang.String"
 		resultType="OrderVO">

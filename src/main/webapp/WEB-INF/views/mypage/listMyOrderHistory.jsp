@@ -191,11 +191,13 @@ border: none;
             <td>주문일자</td>
             <td>주문내역</td>
             <td>주문금액/수량</td>
-            <td>주문상태</td>
+           <!--  <td>주문상태</td> -->
             <td>주문자</td>
-            <td>수령자</td>
+            <!-- <td>수령자</td> -->
+            <td></td>
             <td>주문취소</td>
-            <td>리뷰</td>
+            
+            <!-- <td>리뷰</td> -->
          </tr>
    <c:choose>
      <c:when test="${empty myOrderHistList }">			
@@ -217,7 +219,7 @@ border: none;
 				</td>
 				
 				<td>
-				<fmt:formatDate value="${item.pay_order_time}" pattern="yy/MM/dd HH:mm" var="orderTime"/>
+				<fmt:formatDate value="${item.order_date}" pattern="yy/MM/dd" var="orderTime"/>
 				 ${orderTime}
 				</td>
 				<td style="text-align: left;"> 				
@@ -232,13 +234,13 @@ border: none;
 				
 			  <c:forEach var="item2" items="${myOrderHistList}" varStatus="j">
                    <c:if  test="${item.order_id == item2.order_id}">
-                         <fmt:formatNumber value="${item2.product_sale_price*item2.order_qty }" type="number" var="price" />
+                         <fmt:formatNumber value="${item2.order_price*item2.order_qty }" type="number" var="price" />
                          ${price }원/${item2.order_qty }개<br>
                    </c:if>   
                </c:forEach>
 			
 				</td>
-				<td>
+				<%-- <td>
 				  <strong>
 				    <c:choose>
 					    <c:when test="${item.order_delivery_status=='delivery_prepared' }">
@@ -258,18 +260,18 @@ border: none;
 					    </c:when>
 				  </c:choose>
 				  </strong>
+				</td> --%>
+				<td>
+				 ${item.member_name } 
 				</td>
 				<td>
-				 ${item.mem_name } 
+					${item.order_name }
 				</td>
-				<td>
-					${item.order_rec_name }
-				</td>
-				<td>
-				   <c:if test="${item.order_delivery_status =='delivery_prepared'}">
+				 <td>
+				  <%-- <c:if test="${item.order_delivery_status =='delivery_prepared'}">--%>
 				       <input type="button" class="cancel-order-btn" value="주문취소" data-order_id="${item.order_id}" />
-				     </c:if>
-				</td>
+				     <%-- </c:if> --%>
+				</td> 
 			</tr>
 			<c:if test="${review_product_id == ''}">
                 <c:set var="review_product_id" value="${item.product_id }"/>		
