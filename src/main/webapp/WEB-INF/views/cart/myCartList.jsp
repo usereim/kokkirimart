@@ -388,7 +388,8 @@ function calculateTotal() {
 		}
 	  
 	  
-	 
+	 /*10/30 오종태
+	   요청 경로 변경*/
 	  function fn_order_all_cart_goods() {
 		  var objForm = document.frm_order_all_cart;
 		  var product_id; // 서버전송 상품아이디
@@ -419,7 +420,7 @@ function calculateTotal() {
 		  objForm.appendChild(input);
 
 		  objForm.method = "post";
-		  objForm.action = "${contextPath}/order/orderEachGoods.do";
+		  objForm.action = "${contextPath}/order/orderAllCartGoods.do";
 		  objForm.submit();
 		}
 

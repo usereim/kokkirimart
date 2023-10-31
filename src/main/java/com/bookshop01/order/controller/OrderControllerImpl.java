@@ -41,9 +41,9 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 		
 		Boolean isLogOn=(Boolean)session.getAttribute("isLogOn");
 		String action=(String)session.getAttribute("action");
-		//·Î±×ÀÎ ¿©ºÎ Ã¼Å©
-		//ÀÌÀü¿¡ ·Î±×ÀÎ »óÅÂÀÎ °æ¿ì´Â ÁÖ¹®°úÁ¤ ÁøÇà
-		//·Î±×¾Æ¿ô »óÅÂÀÎ °æ¿ì ·Î±×ÀÎ È­¸éÀ¸·Î ÀÌµ¿
+		//ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		//ï¿½Î±×¾Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
 		if(isLogOn==null || isLogOn==false){
 			session.setAttribute("orderInfo", _orderVO);
 			session.setAttribute("action", "/order/orderEachGoods.do");
@@ -70,6 +70,8 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 		return mav;
 	}
 	
+	/* 10/30  ì˜¤ì¢…íƒœ 
+	 * ì¥ë°”êµ¬ë‹ˆ ë°ì´í„° ì£¼ë¬¸ ë°ì´í„° ì „ë‹¬ ìˆ˜ì •*/
 	@RequestMapping(value="/orderAllCartGoods.do" ,method = RequestMethod.POST)
 	public ModelAndView orderAllCartGoods( @RequestParam("cart_qty")  String[] cart_qty,
 			                 HttpServletRequest request, HttpServletResponse response)  throws Exception{
@@ -84,6 +86,7 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 		List<GoodsVO> myGoodsList=(List<GoodsVO>)cartMap.get("myGoodsList");
 		MemberVO memberVO=(MemberVO)session.getAttribute("memberInfo");
 	
+		
 		for(int i=0; i<cart_qty.length;i++){
 			String[] cart_goods=cart_qty[i].split(":");
 			for(int j = 0; j< myGoodsList.size();j++) {
@@ -98,7 +101,7 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 					_orderVO.setProduct_name(product_name);
 					_orderVO.setOrder_price(order_price);
 					_orderVO.setFileName(fileName);
-					_orderVO.setOrder_qty(Integer.parseInt(cart_goods[1]));
+					_orderVO.setOrder_qty(Integer.parseInt(cart_goods[j]));
 					myOrderList.add(_orderVO);
 					System.out.println(_orderVO.toString());
 					System.out.println(myOrderList);
@@ -143,11 +146,11 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 			orderVO.setOrder_type(receiverMap.get("delivery_method"));
 			orderVO.setPay_method(receiverMap.get("pay_method"));
 			orderVO.setCard_com_name(receiverMap.get("card_com_name"));
-			myOrderList.set(i, orderVO); // °¢ orderVO¿¡ ÁÖ¹®ÀÚ Á¤º¸¸¦ ¼¼ÆÃÇÑ ÈÄ ´Ù½Ã myOrderList¿¡ ÀúÀåÇÑ´Ù.
+			myOrderList.set(i, orderVO); // ï¿½ï¿½ orderVOï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ myOrderListï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		} // end for
 
 		orderService.addNewOrder(myOrderList);
-		mav.addObject("myOrderInfo", receiverMap);// OrderVO·Î ÁÖ¹®°á°ú ÆäÀÌÁö¿¡ ÁÖ¹®ÀÚ Á¤º¸¸¦ Ç¥½ÃÇÑ´Ù.
+		mav.addObject("myOrderInfo", receiverMap);// OrderVOï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½Ñ´ï¿½.
 		mav.addObject("myOrderList", myOrderList);
 		return mav;
 	}
