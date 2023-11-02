@@ -47,8 +47,7 @@ public class CommentService {
 
 	public void addComment(CommentVO commentVO) throws Exception {
 		int commentNO = commentDAO.selectNewCommentNO();
-		//�Ű������� ���� VO�� �� ��� ��ȣ�� ������ ����
-		commentVO.setNotice_No(commentNO);
+		commentVO.setReply_No(commentNO);
 		Map<String, CommentVO> map = new HashMap<String, CommentVO>();
 		map.put("comment", commentVO);
 		commentDAO.insertNewComment(map);

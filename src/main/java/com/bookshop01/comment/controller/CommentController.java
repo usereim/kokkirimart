@@ -16,41 +16,42 @@ import com.bookshop01.comment.service.CommentService;
 import com.bookshop01.comment.vo.CommentVO;
 
 @Controller("commentController")
-public class CommentController{
+public class CommentController {
 	@Autowired
 	private CommentService commentService;
-	
+
 	// �Խñ� �� ������ ���ٽ� �ش� �Խñ��� ��� ������ ����
 	@RequestMapping(value = "/comment/listComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
-	public String listComment(@RequestParam("notice_no") int articleNO , HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		//json���� ���ڿ� ����
+	public String listComment(@RequestParam("notice_no") int articleNO, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		// json���� ���ڿ� ����
 		System.out.println("게시글 번호" + articleNO);
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
 
-	// 변수 이름 변겅 해야됨
+	// 11/02 json으로 댓글 내용 받던거 RequestParam으로 받는 걸로 변경
 	@RequestMapping(value = "/comment/addComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
-	public String addComment(HttpServletRequest request, HttpServletResponse response)
+	public String addComment(@RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
+			@RequestParam("notice_no") int articleNO, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		CommentVO commentVO = new CommentVO();
-		//ajax ��û���� �Ѿ�� json��ü �Ľ��Ͽ� VO�� ����
-		String jsonInfo = request.getParameter("jsonInfo");
-		JSONParser jsonParser = new JSONParser();
-		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
-		String content = (String)jsonObject.get("content");
-		int articleNO = Integer.parseInt((String)jsonObject.get("articleNO"));
-		String id = (String)jsonObject.get("id");
-		
-		commentVO.setReply_Content(content);
+		// ajax ��û���� �Ѿ�� json��ü �Ľ��Ͽ� VO�� ����
+//		String jsonInfo = request.getParameter("jsonInfo");
+//		JSONParser jsonParser = new JSONParser();
+//		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
+//		String content = (String) jsonObject.get("content");
+//		int articleNO = Integer.parseInt((String) jsonObject.get("articleNO"));
+//		String id = (String) jsonObject.get("id");
+
+		commentVO.setReply_Content(ac_content);
 		commentVO.setNotice_No(articleNO);
-		commentVO.setMember_Id(id);
+		commentVO.setMember_Id(userId);
 		// ��� ����
 		commentService.addComment(commentVO);
-		//json���� ���ڿ� ����
+		// json���� ���ڿ� ����
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}

@@ -292,7 +292,7 @@ function backToList(form){
 						<p>
 						<div class="comment_input">
 							<input class="comment_id" type="text" name="userId" id="userId"
-								placeholder="로그인 후 이용 가능" value="${article.member_Id}" required
+								placeholder="로그인 후 이용 가능" value="${memberInfo.member_id}" required
 								readOnly> <input class="comment_text" type="text"
 								name="ac_content" id="ac_content" placeholder="댓글 내용" required
 								autocomplete="off">
@@ -348,6 +348,48 @@ function backToList(form){
 			$('#comment_reply_Form_' + i + '').css('display','block');			
 		}
 	}
+	
+	//댓글 작성 코드 11/02
+	$('#commentForm').on('submit', function(event) {
+		event.preventDefault(); // 폼의 기본 동작인 제출을 막습니다.
+
+		var _notice_no = ${article.notice_No};
+		var ac_content = $('#ac_content').val(); // 댓글 내용을 가져옵니다.
+		var userId = $('#userId').val();
+
+        console.log('클릭!');
+
+		// 댓글 추가를 위한 AJAX 요청 보내기
+		$.ajax({
+			url: '${contextPath}/comment/addComment.do', // 실제 댓글을 추가하는 서버 URL로 대체해주세요
+			type: 'POST',
+			data: {ac_content : ac_content, userId : userId, notice_no :_notice_no},
+			dataType: "text",
+			success: function (response) {
+				var _response = JSON.parse(response);
+				var commentList = $('#commentList');
+				commentList.empty(); // 기존 목록을 비웁니다.
+
+				for (var i = 0; i < _response.comment.length; i++) {
+					var comment = _response.comment[i];
+					var newComment = $('<div class="line">');                                                                  				
+
+					newComment.append($('<div class="line-userId">').text(comment.member_Id));                    			
+					newComment.append($('<div class="line-title">').text(comment.reply_Content));                              	
+					newComment.append($('<button class="line-comment" name="reply" onclick="showCommentForm('+i+')">・ 대댓글</button>'));			
+
+					var ac_commentNoValue = comment.reply_No;
+					newComment.append($('<form id="comment_reply_Form_' + i + '" method="POST" style="display:none;"><input type="text" id="reply-NO_' + i + '" value="' + ac_commentNoValue + '" hidden><input type="text" class="comment_text2" id="reply-input_' + i + '" placeholder="대댓글을 입력해주세요" autocomplete="off"><button type="submit" id="commentBt2_' + i + '" class="reply-btn">대댓글 입력</button></form>'));
+					console.log('넘버 내용: ' + ac_commentNoValue);
+					commentList.append(newComment);
+				}
+			},
+			error: function() {
+				alert('비회원 상태입니다.\n로그인 창으로 넘어갑니다.');
+				location.href = '${contextPath}/member/loginForm.do';
+			}
+		});
+	});
 	</script>
 
 </body>

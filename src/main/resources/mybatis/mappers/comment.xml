@@ -20,7 +20,7 @@
 	
 	<select id="selectNewCommentNO" resultType="int">
 		<![CDATA[
-			SELECT  nvl(max(reply_No), 0) + 1 from t_comment		
+			SELECT  nvl(max(reply_No), 0) + 1 from t_shop_reply	
 		]]>
 	</select>
 	
