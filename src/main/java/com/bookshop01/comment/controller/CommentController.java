@@ -3,8 +3,6 @@ package com.bookshop01.comment.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,41 +14,64 @@ import com.bookshop01.comment.service.CommentService;
 import com.bookshop01.comment.vo.CommentVO;
 
 @Controller("commentController")
-public class CommentController{
+public class CommentController {
 	@Autowired
 	private CommentService commentService;
-	
-	// °Ô½Ã±Û »ó¼¼ ÆäÀÌÁö Á¢±Ù½Ã ÇØ´ç °Ô½Ã±ÛÀÇ ´ñ±Û µ¥ÀÌÅÍ ÀÀ´ä
+
+	// ï¿½Ô½Ã±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù½ï¿½ ï¿½Ø´ï¿½ ï¿½Ô½Ã±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	@RequestMapping(value = "/comment/listComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
-	public String listComment(@RequestParam("articleNO") int articleNO , HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		//jsonÇü½Ä ¹®ÀÚ¿­ ¸®ÅÏ
+	public String listComment(@RequestParam("notice_no") int articleNO, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		// jsonï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+		System.out.println("ê²Œì‹œê¸€ ë²ˆí˜¸" + articleNO);
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
 
-	// ´ñ±Û ÀÛ¼º½Ã ´ñ±Û Á¤º¸ Å×ÀÌºí¿¡ ÀúÀå ÈÄ °»½ÅµÈ ´ñ±Û Á¤º¸ µ¥ÀÌÅÍ ÀÀ´ä
+	// 11/02 jsonìœ¼ë¡œ ëŒ“ê¸€ ë‚´ìš© ë°›ë˜ê±° RequestParamìœ¼ë¡œ ë°›ëŠ” ê±¸ë¡œ ë³€ê²½
 	@RequestMapping(value = "/comment/addComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
-	public String addComment(HttpServletRequest request, HttpServletResponse response)
+	public String addComment(@RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
+			@RequestParam("notice_no") int articleNO, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		CommentVO commentVO = new CommentVO();
-		//ajax ¿äÃ»À¸·Î ³Ñ¾î¿Â json°´Ã¼ ÆÄ½ÌÇÏ¿© VO¿¡ ÀúÀå
-		String jsonInfo = request.getParameter("jsonInfo");
-		JSONParser jsonParser = new JSONParser();
-		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
-		String content = (String)jsonObject.get("content");
-		int articleNO = Integer.parseInt((String)jsonObject.get("articleNO"));
-		String id = (String)jsonObject.get("id");
-		
-		commentVO.setContent(content);
-		commentVO.setArticleNO(articleNO);
-		commentVO.setId(id);
-		// ´ñ±Û ÀúÀå
+		// ajax ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ jsonï¿½ï¿½Ã¼ ï¿½Ä½ï¿½ï¿½Ï¿ï¿½ VOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//		String jsonInfo = request.getParameter("jsonInfo");
+//		JSONParser jsonParser = new JSONParser();
+//		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
+//		String content = (String) jsonObject.get("content");
+//		int articleNO = Integer.parseInt((String) jsonObject.get("articleNO"));
+//		String id = (String) jsonObject.get("id");
+
+		commentVO.setReply_Content(ac_content);
+		commentVO.setNotice_No(articleNO);
+		commentVO.setMember_Id(userId);
+		commentVO.setParent_No(0);
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		commentService.addComment(commentVO);
-		//jsonÇü½Ä ¹®ÀÚ¿­ ¸®ÅÏ
+		// jsonï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
+	
+		// 11/02 ëŒ€ëŒ“ê¸€ ë“±ë¡ ë©”ì„œë“œ
+		@RequestMapping(value = "/comment/addCocomment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
+		@ResponseBody
+		public String addCocomment(@RequestParam("ac_parentNO") int parent_No, @RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
+				@RequestParam("notice_no") int articleNO, HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			CommentVO commentVO = new CommentVO();
+			
+
+			commentVO.setReply_Content(ac_content);
+			commentVO.setNotice_No(articleNO);
+			commentVO.setMember_Id(userId);
+			commentVO.setParent_No(parent_No);
+
+			commentService.addComment(commentVO);
+
+			String commentList = commentService.commentList(articleNO);
+			return commentList;
+		}
 }

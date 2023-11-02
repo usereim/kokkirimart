@@ -23,18 +23,18 @@ public class CommentService {
 
 
 	public String commentList(int articleNO) throws Exception {
-		// °Ô½Ã±Û ¹øÈ£¸¦ ÀÌ¿ëÇÏ¿© °Ô½Ã±ÛÀÇ ´ñ±Û Á¶È¸
+		// ï¿½Ô½Ã±ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ ï¿½Ô½Ã±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 		List<CommentVO> commentList = commentDAO.selectComment(articleNO);
-		// Á¶È¸ÇÑ µ¥ÀÌÅÍ¸¦ jsonÇü½ÄÀÇ ¹®ÀÚ¿­·Î ¸¸µé¾î ¸®ÅÏ
+		// ï¿½ï¿½È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ jsonï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		JSONObject commentObject = null;
 		JSONArray commentArray = new JSONArray();
 		JSONObject totalComment = new JSONObject();
 		for (CommentVO vo : commentList) {
 			commentObject = new JSONObject();
-			commentObject.put("commentNO", vo.getCommentNO());
-			commentObject.put("content", vo.getContent());
-			commentObject.put("id", vo.getId());
-
+			commentObject.put("reply_No", vo.getReply_No());
+			commentObject.put("reply_Content", vo.getReply_Content());
+			commentObject.put("member_Id", vo.getMember_Id());
+			commentObject.put("parent_No", vo.getParent_No());
 			commentArray.add(commentObject);
 		}
 		
@@ -47,8 +47,7 @@ public class CommentService {
 
 	public void addComment(CommentVO commentVO) throws Exception {
 		int commentNO = commentDAO.selectNewCommentNO();
-		//¸Å°³º¯¼ö·Î ¹ÞÀº VO¿¡ »õ ´ñ±Û ¹øÈ£¸¦ °¡Á®¿Í ¼³Á¤
-		commentVO.setCommentNO(commentNO);
+		commentVO.setReply_No(commentNO);
 		Map<String, CommentVO> map = new HashMap<String, CommentVO>();
 		map.put("comment", commentVO);
 		commentDAO.insertNewComment(map);

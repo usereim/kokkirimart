@@ -5,29 +5,29 @@
 
 <mapper namespace="mapper.comment">
 	<resultMap id="commentResult" type="commentVO">
-		<result property="commentNO" column="commentNO" />
-		<result property="content" column="content" />
-		<result property="id" column="id" />
-		<result property="articleNO" column="articleNO" />
+		<result property="reply_No" column="reply_No" />
+		<result property="reply_Content" column="reply_Content" />
+		<result property="member_Id" column="member_Id" />
+		<result property="notice_No" column="notice_No" />
 	</resultMap>
 
 	<select id="selectComment" resultMap="commentResult"
 		parameterType="int">
 		<![CDATA[
-			select * from t_comment where articleNO = #{articleNO}
+			select * from t_shop_reply where notice_No = #{articleNO}
 		]]>
 	</select>
 	
 	<select id="selectNewCommentNO" resultType="int">
 		<![CDATA[
-			SELECT  nvl(max(commentNO), 0) + 1 from t_comment		
+			SELECT  nvl(max(reply_No), 0) + 1 from t_shop_reply	
 		]]>
 	</select>
 	
 	<insert id="insertNewComment" parameterType="java.util.Map">
     <![CDATA[
-      insert into t_comment(commentNO, content, id, articleNO)
-      values(#{comment.commentNO}, #{comment.content}, #{comment.id}, #{comment.articleNO})
+      insert into t_shop_reply(reply_No, reply_Content, member_Id, notice_No, parent_No)
+      values(#{comment.reply_No}, #{comment.reply_Content}, #{comment.member_Id}, #{comment.notice_No}, #{comment.parent_No})
     ]]>
 	</insert>
 </mapper>
