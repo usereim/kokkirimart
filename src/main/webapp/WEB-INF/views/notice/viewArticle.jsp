@@ -16,51 +16,50 @@
 
 <style>
 .line {
-	text-align: left;                                       /* 하유리: 왼쪽 정렬(23.08.01.) */
-	/* margin-bottom: 30px; */                        /* 하유리: 하단 여백 추가(23.08.01.) */
-	margin-top: 30px;                                    /* 하유리: 상단 여백 추가(23.08.02.) */
+	text-align: left; /* 하유리: 왼쪽 정렬(23.08.01.) */
+	/* margin-bottom: 30px; */ /* 하유리: 하단 여백 추가(23.08.01.) */
+	margin-top: 30px; /* 하유리: 상단 여백 추가(23.08.02.) */
 }
-
 
 /* 입력된 댓글_id */
 .line-userId {
 	flex-grow: 1;
-	text-align: left;                                       	/* 하유리: 좌측 정렬(23.08.01.) */
-	font-weight: 700;                                    	/* 하유리: 폰트 굵기 지정(23.08.01.) */
-	vertical-align: 9.3px;                                 	/* 하유리: 아이콘-id 세로 중앙정렬(23.08.02.) */
-	margin-left: 0px;                                    	/* 하유리: 좌측 여백 지정(23.08.02.) */
-	color: #000;                                          		/* 하유리: 폰트 색상 지정(23.08.02.) */
+	text-align: left; /* 하유리: 좌측 정렬(23.08.01.) */
+	font-weight: 700; /* 하유리: 폰트 굵기 지정(23.08.01.) */
+	vertical-align: 9.3px; /* 하유리: 아이콘-id 세로 중앙정렬(23.08.02.) */
+	margin-left: 0px; /* 하유리: 좌측 여백 지정(23.08.02.) */
+	color: #000; /* 하유리: 폰트 색상 지정(23.08.02.) */
 }
 
 /* 입력된 댓글_내용 */
 .line-title {
-	width: 800px;                                          	/* 하유리: 댓글 너비 지정(23.08.01.) */
-	/* font-weight: bold; */                              /* 하유리: 주석 처리(23.08.01.) */
-	/* margin-right: 10px; */                           	/* 하유리: 주석 처리(23.08.01.) */
-	padding:7px 0;                                       	/* 하유리: 상하 여백만 주도록 변경(23.08.01.) */
-	/* background-color: #128853; */              /* 하유리: 배경색 주석 처리(23.08.01.) */
-	color: #333;                                          		/* 하유리: 폰트 색상 변경(23.08.01.) */
-	margin-left: 0px;                                    	/* 하유리: 좌측 여백 지정(23.08.02.) */
-	margin-top: -10px;                                    /* 하유리: 아이디-댓글 내용 사이 여백 지정(23.08.02.) */
+	width: 800px; /* 하유리: 댓글 너비 지정(23.08.01.) */
+	/* font-weight: bold; */ /* 하유리: 주석 처리(23.08.01.) */
+	/* margin-right: 10px; */ /* 하유리: 주석 처리(23.08.01.) */
+	padding: 7px 0; /* 하유리: 상하 여백만 주도록 변경(23.08.01.) */
+	/* background-color: #128853; */ /* 하유리: 배경색 주석 처리(23.08.01.) */
+	color: #333; /* 하유리: 폰트 색상 변경(23.08.01.) */
+	margin-left: 0px; /* 하유리: 좌측 여백 지정(23.08.02.) */
+	margin-top: -10px; /* 하유리: 아이디-댓글 내용 사이 여백 지정(23.08.02.) */
 }
-
 
 /* '대댓글' 버튼 */
 .line-comment {
-	font-size: 13px;											/* 하유리: 폰트 크기 지정(23.08.02.) */
-    color: #828c94;											/* 하유리: 폰트 색상 지정(23.08.02.) */
-    font-weight: 400;										/* 하유리: 폰트 굵기 지정(23.08.02.) */	/* 하유리: 굵기 변경(23.08.02.) */
-    display: inline;											/* 하유리: 인라인요소로 지정(23.08.02.) */
-    border: none;											/* 하유리: 버튼 테두리 제거(23.08.02.) */
-    background-color: #fff;								/* 하유리: 배경 지정(23.08.02.) */
-    margin-left: 10px;										/* 하유리: 좌측으로 이동(23.08.02.) */
+	font-size: 13px; /* 하유리: 폰트 크기 지정(23.08.02.) */
+	color: #828c94; /* 하유리: 폰트 색상 지정(23.08.02.) */
+	font-weight: 400; /* 하유리: 폰트 굵기 지정(23.08.02.) */
+	/* 하유리: 굵기 변경(23.08.02.) */
+	display: inline; /* 하유리: 인라인요소로 지정(23.08.02.) */
+	border: none; /* 하유리: 버튼 테두리 제거(23.08.02.) */
+	background-color: #fff; /* 하유리: 배경 지정(23.08.02.) */
+	margin-left: 10px; /* 하유리: 좌측으로 이동(23.08.02.) */
 }
 
 button:focus {
-  		 outline:none; 
- 	-webkit-tap-hignlight-color:transparent;		/* 하유리: 버튼 클릭 시 테두리 안 생기게(23.08.02.) */
+	outline: none;
+	-webkit-tap-hignlight-color: transparent;
+	/* 하유리: 버튼 클릭 시 테두리 안 생기게(23.08.02.) */
 }
-
 
 /* 댓글작성 폼 */
 #commentForm2 {
@@ -246,7 +245,8 @@ function backToList(form){
 				<c:forEach var="imageFileName" items="${imageFileList}">
 					<tr>
 						<th width=15% class="text-center lb fg fw"
-							style="vertical-align: middle; background-color: #C0C0C0;">첨부 파일</th>
+							style="vertical-align: middle; background-color: #C0C0C0;">첨부
+							파일</th>
 						<td class="result-images"><img alt=""
 							src="${contextPath}/downloadNoticeImage?fileName=${imageFileName.image_Name}&notice_No=${notice_No}">
 						</td>
@@ -305,7 +305,50 @@ function backToList(form){
 		</div>
 	</div>
 
+	<script>
+	// 페이지 호출시 해당 게시글 댓글 내용 출력
+	$(document).ready(function () {
+		var _notice_no = ${article.notice_No};
+		
+		$.ajax({
+			url: '${contextPath}/comment/listComment.do',
+			type: 'POST',
+			data: {notice_no :_notice_no},
+			dataType: "text",
+			success: function (response) {
+				var _response = JSON.parse(response);
+				var commentList = $('#commentList');
+				commentList.empty();
+				for (var i = 0; i < _response.comment.length; i++) {
+					var comment = _response.comment[i];
+					var newComment = $('<div class="line">');                                                                  				
 
+					newComment.append($('<div class="line-userId">').text(comment.member_Id));                    			
+					newComment.append($('<div class="line-title">').text(comment.reply_Content));                              	
+					newComment.append($('<button class="line-comment" name="reply" onclick="showCommentForm('+i+')">・ 대댓글</button>'));			
+
+					var ac_commentNoValue = comment.reply_No;
+					newComment.append($('<form id="comment_reply_Form_' + i + '" method="POST" style="display:none;"><input type="text" id="reply-NO_' + i + '" value="' + ac_commentNoValue + '" hidden><input type="text" class="comment_text2" id="reply-input_' + i + '" placeholder="대댓글을 입력해주세요" autocomplete="off"><button type="submit" id="commentBt2_' + i + '" class="reply-btn">대댓글 입력</button></form>'));
+					console.log('넘버 내용: ' + ac_commentNoValue);
+					commentList.append(newComment);
+				}
+			},
+			error: function() {
+				alert('비회원 상태입니다.\n로그인 창으로 넘어갑니다.');
+				location.href = '${contextPath}/user/loginForm.do';
+			}
+		});
+	});
+	
+	//대댓글 클릭시 대댓글 입력창 보이기
+	function showCommentForm(i) {
+		if($('#comment_reply_Form_' + i + '').css('display')=='block') {
+			$('#comment_reply_Form_' + i + '').css('display','none');
+		} else {
+			$('#comment_reply_Form_' + i + '').css('display','block');			
+		}
+	}
+	</script>
 
 </body>
 </html>

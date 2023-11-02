@@ -20,23 +20,24 @@ public class CommentController{
 	@Autowired
 	private CommentService commentService;
 	
-	// °Ô½Ã±Û »ó¼¼ ÆäÀÌÁö Á¢±Ù½Ã ÇØ´ç °Ô½Ã±ÛÀÇ ´ñ±Û µ¥ÀÌÅÍ ÀÀ´ä
+	// ï¿½Ô½Ã±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù½ï¿½ ï¿½Ø´ï¿½ ï¿½Ô½Ã±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	@RequestMapping(value = "/comment/listComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
-	public String listComment(@RequestParam("articleNO") int articleNO , HttpServletRequest request, HttpServletResponse response)
+	public String listComment(@RequestParam("notice_no") int articleNO , HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		//jsonÇü½Ä ¹®ÀÚ¿­ ¸®ÅÏ
+		//jsonï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+		System.out.println("ê²Œì‹œê¸€ ë²ˆí˜¸" + articleNO);
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
 
-	// ´ñ±Û ÀÛ¼º½Ã ´ñ±Û Á¤º¸ Å×ÀÌºí¿¡ ÀúÀå ÈÄ °»½ÅµÈ ´ñ±Û Á¤º¸ µ¥ÀÌÅÍ ÀÀ´ä
+	// ë³€ìˆ˜ ì´ë¦„ ë³€ê²… í•´ì•¼ë¨
 	@RequestMapping(value = "/comment/addComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
 	public String addComment(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		CommentVO commentVO = new CommentVO();
-		//ajax ¿äÃ»À¸·Î ³Ñ¾î¿Â json°´Ã¼ ÆÄ½ÌÇÏ¿© VO¿¡ ÀúÀå
+		//ajax ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ jsonï¿½ï¿½Ã¼ ï¿½Ä½ï¿½ï¿½Ï¿ï¿½ VOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String jsonInfo = request.getParameter("jsonInfo");
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
@@ -44,12 +45,12 @@ public class CommentController{
 		int articleNO = Integer.parseInt((String)jsonObject.get("articleNO"));
 		String id = (String)jsonObject.get("id");
 		
-		commentVO.setContent(content);
-		commentVO.setArticleNO(articleNO);
-		commentVO.setId(id);
-		// ´ñ±Û ÀúÀå
+		commentVO.setReply_Content(content);
+		commentVO.setNotice_No(articleNO);
+		commentVO.setMember_Id(id);
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		commentService.addComment(commentVO);
-		//jsonÇü½Ä ¹®ÀÚ¿­ ¸®ÅÏ
+		//jsonï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
