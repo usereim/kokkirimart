@@ -34,7 +34,7 @@ public class CommentService {
 			commentObject.put("reply_No", vo.getReply_No());
 			commentObject.put("reply_Content", vo.getReply_Content());
 			commentObject.put("member_Id", vo.getMember_Id());
-
+			commentObject.put("parent_No", vo.getParent_No());
 			commentArray.add(commentObject);
 		}
 		

@@ -26,8 +26,8 @@
 	
 	<insert id="insertNewComment" parameterType="java.util.Map">
     <![CDATA[
-      insert into t_shop_reply(reply_No, reply_Content, member_Id, notice_No)
-      values(#{comment.reply_No}, #{comment.reply_Content}, #{comment.member_Id}, #{comment.notice_No})
+      insert into t_shop_reply(reply_No, reply_Content, member_Id, notice_No, parent_No)
+      values(#{comment.reply_No}, #{comment.reply_Content}, #{comment.member_Id}, #{comment.notice_No}, #{comment.parent_No})
     ]]>
 	</insert>
 </mapper>

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 @Component("commentVO")
 public class CommentVO {
 	private int reply_No;
+	private int parent_No;
 	private String reply_Content;
 	private String member_Id;
 	private int notice_No;
@@ -32,6 +33,12 @@ public class CommentVO {
 	}
 	public void setNotice_No(int notice_No) {
 		this.notice_No = notice_No;
+	}
+	public int getParent_No() {
+		return parent_No;
+	}
+	public void setParent_No(int parent_No) {
+		this.parent_No = parent_No;
 	}
 	
 	

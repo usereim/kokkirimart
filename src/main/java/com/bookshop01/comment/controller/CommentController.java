@@ -3,8 +3,6 @@ package com.bookshop01.comment.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,10 +47,31 @@ public class CommentController {
 		commentVO.setReply_Content(ac_content);
 		commentVO.setNotice_No(articleNO);
 		commentVO.setMember_Id(userId);
+		commentVO.setParent_No(0);
 		// ��� ����
 		commentService.addComment(commentVO);
 		// json���� ���ڿ� ����
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
+	
+		// 11/02 대댓글 등록 메서드
+		@RequestMapping(value = "/comment/addCocomment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
+		@ResponseBody
+		public String addCocomment(@RequestParam("ac_parentNO") int parent_No, @RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
+				@RequestParam("notice_no") int articleNO, HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			CommentVO commentVO = new CommentVO();
+			
+
+			commentVO.setReply_Content(ac_content);
+			commentVO.setNotice_No(articleNO);
+			commentVO.setMember_Id(userId);
+			commentVO.setParent_No(parent_No);
+
+			commentService.addComment(commentVO);
+
+			String commentList = commentService.commentList(articleNO);
+			return commentList;
+		}
 }
