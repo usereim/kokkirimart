@@ -30,6 +30,7 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 	@Autowired
 	private MemberVO memberVO;
 
+            //로그인 기능
 	@Override
 	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
 	public ModelAndView login(@RequestParam Map<String, String> loginMap, HttpServletRequest request,
@@ -42,7 +43,7 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 			session.setAttribute("memberInfo", memberVO);
 			session.setAttribute("isLogOn", true);
 			
-			//관리자 계정(admin)인 경우 isAdmin 값 부여. 10-17
+			//관리자 계정(admin)인 경우 isAdmin 값 부여. 이경민(10-17)
 			 if (memberVO.getMember_id().equals("admin")) {
 		            session.setAttribute("isAdmin", true);
 		        } else {
@@ -50,6 +51,7 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 		        }
 			session = request.getSession(true);	
 			
+                                    //만약 로그인 상태가 아닌 상태에서 주문하기 기능 이용 시 로그인 하도록 강제.
 			String action = (String) session.getAttribute("action");
 			if (action != null && action.equals("/order/orderEachGoods.do")) {
 				mav.setViewName("forward:" + action);
@@ -58,13 +60,14 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 			}
 
 		} else {
-			String message = "占쏙옙占싱듸옙  占쏙옙橘占싫ｏ옙占� 틀占쏙옙占싹댐옙. 占쌕쏙옙 占싸깍옙占쏙옙占쏙옙占쌍쇽옙占쏙옙";
+			String message = "오류 : 로그인에 실패하였습니다.";
 			mav.addObject("message", message);
 			mav.setViewName("/member/loginForm");
 		}
 		return mav;
 	}
 
+            //로그아웃 기능
 	@Override
 	@RequestMapping(value = "/logout.do", method = RequestMethod.GET)
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -87,6 +90,7 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 		return mav;
 	}
 
+            //회원가입 기능
 	@Override
 	@RequestMapping(value = "/addMember.do", method = RequestMethod.POST)
 	public ResponseEntity addMember(@ModelAttribute("memberVO") MemberVO _memberVO, HttpServletRequest request,
@@ -100,13 +104,13 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 		try {
 			memberService.addMember(_memberVO);
 			message = "<script>";
-			message += " alert('회占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占싣쏙옙占싹댐옙.占싸깍옙占쏙옙창占쏙옙占쏙옙 占싱듸옙占쌌니댐옙.');";
+			message += " alert('회원 가입 하였습니다.');";
 			message += " location.href='" + request.getContextPath() + "/member/loginForm.do';";
 			message += " </script>";
 
 		} catch (Exception e) {
 			message = "<script>";
-			message += " alert('占쌜억옙 占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩삼옙占쌩쏙옙占싹댐옙. 占쌕쏙옙 占시듸옙占쏙옙 占쌍쇽옙占쏙옙');";
+			message += " alert('오류 : 회원 가입 실패하였습니다.');";
 			message += " location.href='" + request.getContextPath() + "/member/memberForm.do';";
 			message += " </script>";
 			e.printStackTrace();
@@ -125,6 +129,7 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 		return resEntity;
 	}
 
+            //카카오 로그인 API
 	@Override
 	@RequestMapping(value = "/kakaoLogin.do", method = RequestMethod.GET)
 	public ModelAndView kakaoLogin(@RequestParam(value = "code", required = false) String code, HttpServletRequest request) throws Exception {
