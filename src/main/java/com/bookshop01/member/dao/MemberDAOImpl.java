@@ -16,12 +16,14 @@ public class MemberDAOImpl implements MemberDAO {
 	@Autowired
 	private SqlSession sqlSession;
 
+	// 일반 로그인
 	@Override
 	public MemberVO login(Map loginMap) throws DataAccessException {
 		MemberVO member = (MemberVO) sqlSession.selectOne("mapper.member.login", loginMap);
 		return member;
 	}
 
+	// 회원가입 정보 DB에 저장
 	@Override
 	public void insertNewMember(MemberVO memberVO) throws DataAccessException {
 		sqlSession.insert("mapper.member.insertNewMember", memberVO);
@@ -33,13 +35,13 @@ public class MemberDAOImpl implements MemberDAO {
 		return result;
 	}
 
-	// ���� ����
+	// 카카오 로그인
 	@Override
 	public void kakaoinsert(HashMap<String, Object> userInfo) {
 		sqlSession.insert("mapper.member.kakaoInsert", userInfo);
 	}
 
-	// ���� Ȯ��
+	// 카카오 계정 찾기
 	@Override
 	public KakaoDTO findkakao(HashMap<String, Object> userInfo) {
 		System.out.println("RN:" + userInfo.get("nickname"));
