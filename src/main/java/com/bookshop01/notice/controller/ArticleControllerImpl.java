@@ -41,19 +41,28 @@ public class ArticleControllerImpl implements ArticleController {
 	@Autowired
 	private ArticleVO articleVO;
 
+	//게시물을 불러오는 메서드 + 페이지 넘버링을 매기는 메서드
 	@Override
 	@RequestMapping(value = "/notice/listArticles.do", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView listArticles(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+		// 페이징을 위해 request로 값을 가져옴
 		String _section=request.getParameter("section");
 		String _pageNum=request.getParameter("pageNum");
+		
+		//String으로 지정된 값을 parseInt를 이용해 int로 변경
 		int section = Integer.parseInt(((_section==null)? "1":_section) );
 		int pageNum = Integer.parseInt(((_pageNum==null)? "1":_pageNum));
+		
+		// 페이징 맵을 만들어 section과 pageNum값을 넣음
 		Map pagingMap=new HashMap();
 		pagingMap.put("section", section);
 		pagingMap.put("pageNum", pageNum);
+		
+		// 페이징 맵으로 리스트를 불러오는 SQL을 동작시킴
 		Map articlesMap = articleService.listArticles(pagingMap);
 
+		// 가져온 값을 articlesMap에 넣음
 		articlesMap.put("section", section);
 		articlesMap.put("pageNum", pageNum);
 		
@@ -65,7 +74,7 @@ public class ArticleControllerImpl implements ArticleController {
 
 	}
 
-
+	// 게시글을 클릭할 때(읽을때) 작동하는 메서드
 	@RequestMapping(value = "/notice/viewArticle.do", method = RequestMethod.GET)
 	public ModelAndView viewArticle(@RequestParam("notice_No") int notice_No, 
 												@RequestParam(value="removeCompleted", required=false) String removeCompleted,
@@ -74,11 +83,13 @@ public class ArticleControllerImpl implements ArticleController {
 		HttpSession session = request.getSession();
 		MemberVO memberVO = (MemberVO)session.getAttribute("memberInfo");
 		
+		// memberVO가 비어있지 않은 경우 id를 가져오도록 함
 		String id = null;
 		if(memberVO != null) {
 			id = memberVO.getMember_id();
 		}
 		
+		// viewMap에 글 번호와 작성자 id를 추가
 		Map viewMap = new HashMap();
 		viewMap.put("notice_No", notice_No);
 		viewMap.put("member_Id", id);
@@ -89,11 +100,12 @@ public class ArticleControllerImpl implements ArticleController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName(viewName);
 		mav.addObject("notice_No", notice_No); //게시글 번호 추가
-		mav.addObject("articleMap", articleMap);
+		mav.addObject("articleMap", articleMap); // articleMap에 viewMap으로 SQL을 작동시킨 결과 값 추가
 		return mav;
 	}
 
 
+	// 게시글 삭제 메서드
 	@Override
 	@RequestMapping(value = "/notice/removeArticle.do", method = RequestMethod.POST)
 	@ResponseBody
@@ -105,7 +117,7 @@ public class ArticleControllerImpl implements ArticleController {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
-			System.out.println("------寃뚯떆湲� �궘�젣------");
+			//게시글 삭제 SQL을 게시글 번호(notice_No)로 작동.
 			articleService.removeArticle(notice_No);
 			//File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No);
 			//FileUtils.deleteDirectory(destDir);
@@ -118,7 +130,7 @@ public class ArticleControllerImpl implements ArticleController {
 
 		} catch (Exception e) {
 			message = "<script>";
-			message += " alert('�옉�뾽以� �삤瑜섍� 諛쒖깮�뻽�뒿�땲�떎.�떎�떆 �떆�룄�빐 二쇱꽭�슂.');";
+			message += " alert('게시글이 삭제되지 않았습니다. 오류가 발생하였습니다.');";
 			message += " location.href='" + request.getContextPath() + "/notice/listArticles.do';";
 			message += " </script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
@@ -127,7 +139,7 @@ public class ArticleControllerImpl implements ArticleController {
 		return resEnt;
 	}
 
-	// �떎以� �씠誘몄� 湲� 異붽��븯湲�
+	// 게시글 추가 메서드
 	@Override
 	@RequestMapping(value = "/notice/addNewArticle.do", method = RequestMethod.POST)
 	@ResponseBody
@@ -144,16 +156,19 @@ public class ArticleControllerImpl implements ArticleController {
 			articleMap.put(name, value);
 		}
 
+		// 세션을 이용해 id를 가져옴.
 		HttpSession session = multipartRequest.getSession();
 		MemberVO memberVO = (MemberVO) session.getAttribute("memberInfo");
 		String member_Id = memberVO.getMember_id();
 
+		// id값을 articleMap에 넣음
 		articleMap.put("member_Id", member_Id);
 		
 //		String groupNO = (String)session.getAttribute("groupNO")  ;
 //		articleMap.put("groupNO" ,  groupNO);
 //		session.removeAttribute("groupNO");
 
+		// 이미지 파일 업로드를 수행
 		List<String> fileList = upload(multipartRequest);
 		List<ImageVO> imageFileList = new ArrayList<ImageVO>();
 		if (fileList != null && fileList.size() != 0) {
@@ -169,7 +184,7 @@ public class ArticleControllerImpl implements ArticleController {
 		ResponseEntity resEnt = null;
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		try {
+		try { //게시판 번호로 temp에 저장된 이미지 파일을 글 번호 폴더를 만들어 여기에 저장토록 함.
 			int notice_No = articleService.addNewArticle(articleMap);
 			if (imageFileList != null && imageFileList.size() != 0) {
 				for (ImageVO imageVO : imageFileList) {
@@ -199,7 +214,7 @@ public class ArticleControllerImpl implements ArticleController {
 			}
 
 			message = " <script>";
-			message += " alert('�삤瑜섍� 諛쒖깮�뻽�뒿�땲�떎. �떎�떆 �떆�룄�빐 二쇱꽭�슂');');";
+			message += " alert('오류로 인해 게시글을 추가하지 못하였습니다.');');";
 			message += " location.href='" + multipartRequest.getContextPath() + "/notice/articleForm.do'; ";
 			message += " </script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
@@ -209,7 +224,7 @@ public class ArticleControllerImpl implements ArticleController {
 	}
 	
 	
-	// �떎以� �떟湲� 異붽��븯湲�
+	// 댓글 기능(정태양)
 	@Override
 	@RequestMapping(value = "/notice/addReplyArticle.do", method = RequestMethod.POST)
 	@ResponseBody
@@ -226,13 +241,13 @@ public class ArticleControllerImpl implements ArticleController {
 			articleMap.put(name, value);
 		}
 
-		// 濡쒓렇�씤 �떆 �꽭�뀡�뿉 ���옣�맂 �쉶�썝 �젙蹂댁뿉�꽌 湲��벖�씠 �븘�씠�뵒瑜� �뼸�뼱���꽌 Map�뿉 ���옣�빀�땲�떎.
+		
 		HttpSession session = multipartRequest.getSession();
 		MemberVO memberVO = (MemberVO) session.getAttribute("member");
 		String id = memberVO.getMember_id();
 		articleMap.put("id", id);
 		
-		//�꽭�뀡�뿉 ���옣�븳 遺�紐④�怨� 湲�洹몃９踰덊샇瑜� 媛�吏�怨� �삩�떎.
+		
 		String parentNO = (String)session.getAttribute("parentNO")  ;
 		articleMap.put("parentNO" , (parentNO == null ? 0 : parentNO));
 		session.removeAttribute("parentNO");
@@ -270,7 +285,7 @@ public class ArticleControllerImpl implements ArticleController {
 			}
 
 			message = "<script>";
-			message += " alert('�떟湲��쓣 異붽��뻽�뒿�땲�떎.');";
+			message += " alert('댓글 작성 완료.');";
 			message += " location.href='" + multipartRequest.getContextPath() + "/article/viewArticle.do?articleNO=" + articleMap.get("articleNO") + "';" ;
 			message += " </script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
@@ -285,7 +300,7 @@ public class ArticleControllerImpl implements ArticleController {
 			}
 
 			message = " <script>";
-			message += " alert('�삤瑜섍� 諛쒖깮�뻽�뒿�땲�떎. �떎�떆 �떆�룄�빐 二쇱꽭�슂');');";
+			message += " alert('작성에 오류가 발생하였습니다.');');";
 			message += " location.href='" + multipartRequest.getContextPath() + "/article/articleForm.do'; ";
 			message += " </script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
@@ -296,7 +311,7 @@ public class ArticleControllerImpl implements ArticleController {
 
 	
 
-	// �떎以� �씠誘몄� �닔�젙 湲곕뒫
+	// 게시글 수정
 	@RequestMapping(value = "/notice/modArticle.do", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, HttpServletResponse response)
@@ -304,7 +319,7 @@ public class ArticleControllerImpl implements ArticleController {
 		multipartRequest.setCharacterEncoding("utf-8");
 		Map<String, Object> articleMap = new HashMap<String, Object>();
 		Enumeration enu = multipartRequest.getParameterNames();
-		while (enu.hasMoreElements()) {
+		while (enu.hasMoreElements()) { //해당 게시글 번호로 이미지 파일이 존재하는지 확인하고 articleMap에 추가
 			String name = (String) enu.nextElement();
 
 			if (name.equals("image_No")) {
@@ -320,7 +335,7 @@ public class ArticleControllerImpl implements ArticleController {
 
 		}
 
-		List<String> fileList = uploadModImageFile(multipartRequest); //�닔�젙�븳 �씠誘몄� �뙆�씪�쓣 �뾽濡쒕뱶�븳�떎.
+		List<String> fileList = uploadModImageFile(multipartRequest); //수정하려는 이미지 파일을 추가함
 
 		int added_img_num = Integer.parseInt((String) articleMap.get("added_img_num"));
 		int pre_img_num = Integer.parseInt((String) articleMap.get("pre_img_num"));
@@ -353,11 +368,11 @@ public class ArticleControllerImpl implements ArticleController {
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
 			articleService.modArticle(articleMap);
-			if (fileList != null && fileList.size() != 0) { // �닔�젙�븳 �뙆�씪�뱾�쓣 李⑤���濡� �뾽濡쒕뱶�븳�떎.
+			if (fileList != null && fileList.size() != 0) { //수정하려는 이미지 파일을 실제 로컬 폴더에 추가함
 				for (int i = 0; i < fileList.size(); i++) {
 					String fileName = fileList.get(i);
 					if (i  < pre_img_num ) {
-						if (fileName != null) {
+						if (fileName != null) { //temp 폴더에 있는 파일을 글번호 폴더로 옮김
 							File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + fileName);
 							File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No);
 							FileUtils.moveFileToDirectory(srcFile, destDir, true);
@@ -365,10 +380,11 @@ public class ArticleControllerImpl implements ArticleController {
 							String[] oldName = (String[]) articleMap.get("oldFileName");
 							String oldFileName = oldName[i];
 
+							//변경 전 이미지 파일을 삭제
 							File oldFile = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No + "\\" + oldFileName);
 							oldFile.delete();
 						}
-					}else {
+					}else { //중복되는 파일 이름이 없는 경우에는 옮기기만 수행
 						if (fileName != null) {
 							File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + fileName);
 							File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No);
@@ -379,14 +395,14 @@ public class ArticleControllerImpl implements ArticleController {
 			}
 
 			message = "<script>";
-			message += " alert('湲��쓣 �닔�젙�뻽�뒿�땲�떎.');";
+			message += " alert('수정 완료했습니다.');";
 			message += " location.href='" + multipartRequest.getContextPath() + "/notice/viewArticle.do?notice_No="
 					+ notice_No + "';";
 			message += " </script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 		} catch (Exception e) {
 
-			if (fileList != null && fileList.size() != 0) { // �삤瑜� 諛쒖깮 �떆 temp �뤃�뜑�뿉 �뾽濡쒕뱶�맂 �씠誘몄� �뙆�씪�뱾�쓣 �궘�젣�븳�떎.
+			if (fileList != null && fileList.size() != 0) {
 				for (int i = 0; i < fileList.size(); i++) {
 					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + fileList.get(i));
 					srcFile.delete();
@@ -396,7 +412,7 @@ public class ArticleControllerImpl implements ArticleController {
 			}
 
 			message = "<script>";
-			message += " alert('�삤瑜섍� 諛쒖깮�뻽�뒿�땲�떎.�떎�떆 �닔�젙�빐二쇱꽭�슂');";
+			message += " alert('오류로 인해 수정에 실패했습니다.');";
 			message += " location.href='" + multipartRequest.getContextPath() + "/notice/viewArticle.do?notice_No="
 					+ notice_No + "';";
 			message += " </script>";
@@ -405,7 +421,7 @@ public class ArticleControllerImpl implements ArticleController {
 		return resEnt;
 	}
 
-	// �닔�젙�븯湲곗뿉�꽌 �씠誘몄� �궘�젣 湲곕뒫
+	// 이미지 삭제 메서드
 	@RequestMapping(value = "/notice/removeModImage.do", method = RequestMethod.POST)
 	@ResponseBody
 	public void removeModImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -414,7 +430,7 @@ public class ArticleControllerImpl implements ArticleController {
 		response.setContentType("text/html; charset=utf-8");
 		PrintWriter writer = response.getWriter();
 
-		try {
+		try { //이미지 정보를 가져옴
 			String image_No = (String) request.getParameter("image_No");
 			String imageFileName = (String) request.getParameter("imageFileName");
 			String notice_No = (String) request.getParameter("notice_No");
@@ -422,11 +438,13 @@ public class ArticleControllerImpl implements ArticleController {
 			System.out.println("image_No = " + image_No);
 			System.out.println("notice_No = " + notice_No);
 
+			// ImageVO에 가져온 정보를 담음
 			ImageVO imageVO = new ImageVO();
 			imageVO.setNotice_No(Integer.parseInt(notice_No));
 			imageVO.setImage_No(Integer.parseInt(image_No));
 			articleService.removeModImage(imageVO);
 			
+			// 경로를 확인해 삭제처리
 			File oldFile = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No + "\\" + imageFileName);
 			oldFile.delete();
 			
@@ -436,21 +454,8 @@ public class ArticleControllerImpl implements ArticleController {
 		}
 
 	}
-
 	
-//	@RequestMapping(value = "/board/*Form.do", method = {RequestMethod.GET , RequestMethod.POST})
-//	private ModelAndView form(@RequestParam(value="parentNO", required=false) String parentNO,
-//			                            HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		String viewName = (String) request.getAttribute("viewName");
-//		
-//		if(viewName.equals("/board/replyForm")) {
-//			HttpSession session = request.getSession();
-//			if(parentNO != null) {
-//				session.setAttribute("parentNO", parentNO);  //誘몃━ 濡쒓렇�씤 �썑, �떟湲� �벐湲� �겢由� �떆 遺�紐④�踰덊샇瑜� �꽭�뀡�뿉 ���옣
-//			}
-//		}
-	
-	
+	// 글쓰기 메서드
 	@RequestMapping(value = "/notice/articleForm.do", method = {RequestMethod.GET , RequestMethod.POST})
 	private ModelAndView articleForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String viewName = (String) request.getAttribute("viewName");
@@ -460,7 +465,7 @@ public class ArticleControllerImpl implements ArticleController {
 		return mav;
 	}
 	
-	
+	// 글 답변 메서드
 	@RequestMapping(value = "/notice/replyForm.do", method = {RequestMethod.GET , RequestMethod.POST})
 	private ModelAndView replyForm(@RequestParam(value="parentNO", required=false) String parentNO,
 												@RequestParam(value="groupNO", required=false) String groupNO,
@@ -482,7 +487,7 @@ public class ArticleControllerImpl implements ArticleController {
 	
 
 
-	// �깉 湲� �벐湲� �떆 �떎以� �씠誘몄� �뾽濡쒕뱶�븯湲�
+	// 이미지 업로드 메서드
 	private List<String> upload(MultipartHttpServletRequest multipartRequest) throws Exception {
 		List<String> fileList = new ArrayList<String>();
 		Iterator<String> fileNames = multipartRequest.getFileNames();
@@ -494,14 +499,9 @@ public class ArticleControllerImpl implements ArticleController {
 				fileList.add(originalFileName);
 				File file = new File(ARTICLE_IMAGE_REPO + "\\" + fileName);
 				if (mFile.getSize() != 0) { // File Null Check
-					if (!file.exists()) { // 寃쎈줈�긽�뿉 �뙆�씪�씠 議댁옱�븯吏� �븡�쓣 寃쎌슦
-						file.getParentFile().mkdirs(); // 寃쎈줈�뿉 �빐�떦�븯�뒗 �뵒�젆�넗由щ뱾�쓣 �깮�꽦
-						mFile.transferTo(new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + originalFileName)); // �엫�떆濡�
-																													// ���옣�맂
-																													// multipartFile�쓣
-																													// �떎�젣
-																													// �뙆�씪濡�
-																													// �쟾�넚
+					if (!file.exists()) { 
+						file.getParentFile().mkdirs(); 
+						mFile.transferTo(new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + originalFileName)); 
 					}
 				}
 			}
@@ -510,7 +510,7 @@ public class ArticleControllerImpl implements ArticleController {
 		return fileList;
 	}
 
-	// �닔�젙 �떆 �떎以� �씠誘몄� �뾽濡쒕뱶�븯湲�
+	// 이미지 수정 업로드 메서드
 	private List<String> uploadModImageFile(MultipartHttpServletRequest multipartRequest) throws Exception {
 		List<String> fileList = new ArrayList<String>();
 		Iterator<String> fileNames = multipartRequest.getFileNames();
@@ -522,9 +522,9 @@ public class ArticleControllerImpl implements ArticleController {
 				fileList.add(originalFileName);
 				File file = new File(ARTICLE_IMAGE_REPO + "\\" + fileName);
 				if (mFile.getSize() != 0) { // File Null Check
-					if (!file.exists()) { // 寃쎈줈�긽�뿉 �뙆�씪�씠 議댁옱�븯吏� �븡�쓣 寃쎌슦
-						file.getParentFile().mkdirs(); // 寃쎈줈�뿉 �빐�떦�븯�뒗 �뵒�젆�넗由щ뱾�쓣 �깮�꽦
-						mFile.transferTo(new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + originalFileName)); // �엫�떆濡�
+					if (!file.exists()) { 
+						file.getParentFile().mkdirs(); 
+						mFile.transferTo(new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + originalFileName)); 
 					}
 				}
 			} else {
@@ -535,6 +535,7 @@ public class ArticleControllerImpl implements ArticleController {
 		return fileList;
 	}
 	
+	// 게시글 수정 메서드 (오종태)
 	@RequestMapping(value = "/notice/saveChanges.do", method = {RequestMethod.GET , RequestMethod.POST})
 	public ResponseEntity<String> saveChanges(@RequestBody Map<String, String> requestData) {
         try {
@@ -559,9 +560,3 @@ public class ArticleControllerImpl implements ArticleController {
 	
 	
 }
-
-
-
-
-
-
