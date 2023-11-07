@@ -211,13 +211,14 @@ function backToList(form){
 <title>게시물 조회</title>
 </head>
 <body>
+<%-- [11/7] 게시글 제목의 높넓이 수정 : 이경민 --%>
 
 	<h1 style="font-size: 30px; margin-bottom: 80px;">공지사항</h1>
 	<div role="main" class="container">
 		<div class="row row1">
 			<table class="table" style="width: 800px; margin-left: 140px;">
 				<tr>
-					<th viwidth=15% class="text-center fg lb fw"
+					<th viwidth=20% class="text-center fg lb fw"
 						style="background-color: #C0C0C0;">작성자</th>
 					<td width=35% class="fgl" style="text-align: center;">
 						${article.member_Id }</td>
@@ -229,7 +230,7 @@ function backToList(form){
 					<th width=15% class="text-center lb fg fw"
 						style="background-color: #C0C0C0;">제목</th>
 					<td colspan="2" class="fgl"><textarea id='i_title'
-							style='white-space: pre-wrap; border: none; background-color: white; width: 100%; height: 200px;'
+							style='white-space: pre-wrap; border: none; background-color: white; width: 300px; height:28px;'
 							disabled>${article.notice_Title}</textarea></td>
 				</tr>
 				<tr>
@@ -342,8 +343,8 @@ function backToList(form){
 				}
 			},
 			error: function() {
-				alert('비회원 상태입니다.\n로그인 창으로 넘어갑니다.');
-				location.href = '${contextPath}/user/loginForm.do';
+				alert('에러가 발생했습니다. 로그인 상태가 아니거나 AJAX 에러입니다.');
+				//location.href = '${contextPath}/member/loginForm.do';
 			}
 		});
 	});
