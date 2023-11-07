@@ -21,11 +21,11 @@ public class CommentService {
 	@Autowired
 	CommentDAO commentDAO;
 
-
+	//댓글 목록
 	public String commentList(int articleNO) throws Exception {
-		// �Խñ� ��ȣ�� �̿��Ͽ� �Խñ��� ��� ��ȸ
+
 		List<CommentVO> commentList = commentDAO.selectComment(articleNO);
-		// ��ȸ�� �����͸� json������ ���ڿ��� ����� ����
+		//JSON 타입으로 댓글 내용을 전달함
 		JSONObject commentObject = null;
 		JSONArray commentArray = new JSONArray();
 		JSONObject totalComment = new JSONObject();
@@ -44,7 +44,7 @@ public class CommentService {
 		return jsonInfo;
 	}
 
-
+	//댓글 추가
 	public void addComment(CommentVO commentVO) throws Exception {
 		int commentNO = commentDAO.selectNewCommentNO();
 		commentVO.setReply_No(commentNO);
