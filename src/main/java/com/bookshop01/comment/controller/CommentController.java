@@ -18,25 +18,27 @@ public class CommentController {
 	@Autowired
 	private CommentService commentService;
 
-	// �Խñ� �� ������ ���ٽ� �ش� �Խñ��� ��� ������ ����
+	//댓글 목록 출력
 	@RequestMapping(value = "/comment/listComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
 	public String listComment(@RequestParam("notice_no") int articleNO, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		// json���� ���ڿ� ����
+		
 		System.out.println("게시글 번호" + articleNO);
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
 
 	// 11/02 json으로 댓글 내용 받던거 RequestParam으로 받는 걸로 변경
+	// 댓글 추가
 	@RequestMapping(value = "/comment/addComment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 	@ResponseBody
 	public String addComment(@RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
 			@RequestParam("notice_no") int articleNO, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		CommentVO commentVO = new CommentVO();
-		// ajax ��û���� �Ѿ�� json��ü �Ľ��Ͽ� VO�� ����
+		
+		//json 타입으로 댓글 내용 받는 코드(사용 X)
 //		String jsonInfo = request.getParameter("jsonInfo");
 //		JSONParser jsonParser = new JSONParser();
 //		JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonInfo);
@@ -48,14 +50,14 @@ public class CommentController {
 		commentVO.setNotice_No(articleNO);
 		commentVO.setMember_Id(userId);
 		commentVO.setParent_No(0);
-		// ��� ����
+
 		commentService.addComment(commentVO);
-		// json���� ���ڿ� ����
+		
 		String commentList = commentService.commentList(articleNO);
 		return commentList;
 	}
 	
-		// 11/02 대댓글 등록 메서드
+		// 11/02 대댓글 등록 메서드(정태양)
 		@RequestMapping(value = "/comment/addCocomment.do", produces = "application/text; charset=utf8", method = RequestMethod.POST)
 		@ResponseBody
 		public String addCocomment(@RequestParam("ac_parentNO") int parent_No, @RequestParam("ac_content") String ac_content, @RequestParam("userId") String userId,
