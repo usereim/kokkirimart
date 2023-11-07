@@ -41,9 +41,8 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 		
 		Boolean isLogOn=(Boolean)session.getAttribute("isLogOn");
 		String action=(String)session.getAttribute("action");
-		//�α��� ���� üũ
-		//������ �α��� ������ ���� �ֹ����� ����
-		//�α׾ƿ� ������ ��� �α��� ȭ������ �̵�
+		//로그인 상태인지 확인하여 로그인이 아닌 경우
+		//로그인 하도록 redirect:/member/loginForm.do 요청을 한다.
 		if(isLogOn==null || isLogOn==false){
 			session.setAttribute("orderInfo", _orderVO);
 			session.setAttribute("action", "/order/orderEachGoods.do");
@@ -146,11 +145,11 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 			orderVO.setOrder_type(receiverMap.get("delivery_method"));
 			orderVO.setPay_method(receiverMap.get("pay_method"));
 			orderVO.setCard_com_name(receiverMap.get("card_com_name"));
-			myOrderList.set(i, orderVO); // �� orderVO�� �ֹ��� ������ ������ �� �ٽ� myOrderList�� �����Ѵ�.
+			myOrderList.set(i, orderVO);
 		} // end for
 
 		orderService.addNewOrder(myOrderList);
-		mav.addObject("myOrderInfo", receiverMap);// OrderVO�� �ֹ���� �������� �ֹ��� ������ ǥ���Ѵ�.
+		mav.addObject("myOrderInfo", receiverMap);
 		mav.addObject("myOrderList", myOrderList);
 		return mav;
 	}
