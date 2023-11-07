@@ -34,22 +34,24 @@ public class CartControllerImpl extends BaseController implements CartController
 	@Autowired
 	private MemberVO memberVO;
 	
+	//ë‚´ ì¥ë°”êµ¬ë‹ˆ ëª©ë¡
 	@RequestMapping(value="/myCartList.do" ,method = RequestMethod.GET)
 	public ModelAndView myCartMain(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		
-		System.out.println("aaaaaaaaaaaaaaaaaaaaa");
+		System.out.println("------------------------");
 		String viewName=(String)request.getAttribute("viewName");
 		ModelAndView mav = new ModelAndView(viewName);
 		HttpSession session=request.getSession();
 		MemberVO memberVO=(MemberVO)session.getAttribute("memberInfo");
 		String member_id=memberVO.getMember_id();
-		System.out.println("aaaaaaaaaaaaaaaaaaaaa"+member_id);
+		System.out.println("------------------------"+member_id);
 		cartVO.setMember_id(member_id);
 		Map<String ,List> cartMap=cartService.myCartList(cartVO);
-		session.setAttribute("cartMap", cartMap);//Àå¹Ù±¸´Ï ¸ñ·Ï È­¸é¿¡¼­ »óÇ° ÁÖ¹® ½Ã »ç¿ëÇÏ±â À§ÇØ¼­ Àå¹Ù±¸´Ï ¸ñ·ÏÀ» ¼¼¼Ç¿¡ ÀúÀåÇÑ´Ù.
+		session.setAttribute("cartMap", cartMap);//ì¥ë°”êµ¬ë‹ˆ ëª©ë¡ í™”ë©´ì—ì„œ ìƒí’ˆ ì£¼ë¬¸ ì‹œ ì‚¬ìš©í•˜ê¸° ìœ„í•´ì„œ ì¥ë°”êµ¬ë‹ˆ ëª©ë¡ì„ ì„¸ì…˜ì— ì €ì¥í•œë‹¤.
 		//mav.addObject("cartMap", cartMap);
 		return mav;
 	}
+	//ì¥ë°”êµ¬ë‹ˆ ì¶”ê°€
 	@RequestMapping(value="/addGoodsInCart.do" ,method = RequestMethod.POST,produces = "application/text; charset=utf8")
 	public  @ResponseBody String addGoodsInCart(@RequestParam("product_id") int product_id,
 			                    HttpServletRequest request, HttpServletResponse response)  throws Exception{
@@ -57,7 +59,7 @@ public class CartControllerImpl extends BaseController implements CartController
 		memberVO=(MemberVO)session.getAttribute("memberInfo");
 		String member_id=memberVO.getMember_id();
 		cartVO.setMember_id(member_id);
-		//Ä«Æ® µî·ÏÀü¿¡ ÀÌ¹Ì µî·ÏµÈ Á¦Ç°ÀÎÁö ÆÇº°ÇÑ´Ù.
+		//ì¹´íŠ¸ ë“±ë¡ì „ì— ì´ë¯¸ ë“±ë¡ëœ ì œí’ˆì¸ì§€ íŒë³„í•œë‹¤.
 		cartVO.setProduct_id(product_id);;
 		cartVO.setMember_id(member_id);
 		boolean isAreadyExisted=cartService.findCartGoods(cartVO);
@@ -69,7 +71,7 @@ public class CartControllerImpl extends BaseController implements CartController
 			return "add_success";
 		}
 	}
-	
+	// ì¥ë°”êµ¬ë‹ˆ ìˆ˜ëŸ‰ ë³€ê²½
 	@RequestMapping(value="/modifyCartQty.do" ,method = RequestMethod.POST)
 	public @ResponseBody String  modifyCartQty(@RequestParam("product_id") int product_id,
 			                                   @RequestParam("cart_qty") int cart_qty,
@@ -89,7 +91,7 @@ public class CartControllerImpl extends BaseController implements CartController
 		}
 		
 	}
-	
+	// ì¥ë°”êµ¬ë‹ˆ ë¬¼ê±´ ì‚­ì œ
 	@RequestMapping(value="/removeCartGoods.do" ,method = RequestMethod.POST)
 	public ModelAndView removeCartGoods(@RequestParam("cart_id") int cart_id,
 			                          HttpServletRequest request, HttpServletResponse response)  throws Exception{
