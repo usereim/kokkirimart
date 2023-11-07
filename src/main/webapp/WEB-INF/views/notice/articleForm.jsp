@@ -32,8 +32,9 @@
 }
 
 .row1 {
-	margin: 0px auto;
+	margin: 0px;
 	width: 1100px;
+	text-align: left;
 }
 
 #asas {
@@ -145,6 +146,8 @@
 </head>
 <body>
 
+<%-- [11/7] Style 수정 : 이경민 --%>
+
 	<h1 class="hh1">공지글 작성</h1>
 	<form method="post" name="articleForm" id="form" role="form"
 		action="${contextPath}/notice/addNewArticle.do"
@@ -153,40 +156,37 @@
 			<div class="row row1">
 				<table class="table">
 					<tr>
-						<th width=15% class="text-center fg lb fw"
+						<th width=20% class="text-center fg lb fw"
 							style="background-color: #C0C0C0;">작성자</th>
 						<td width=85% class="text-left fgl"><input
-							style="width: 350px;" type="text" name="notice_member_Id"
+							style="width: 300px;" type="text" name="notice_member_Id"
 							class="bordered-input" value="admin" disabled />
 					</tr>
 					<tr>
-						<th width=10% class="text-center fg lb fw"
+						<th width=20% class="text-center fg lb fw"
 							style="background-color: #C0C0C0;">제목</th>
-						<td width=90% class="text-left fgl"><input
-							style="width: 700px;" type="text" name="notice_Title"
+						<td width=80% class="text-left fgl"><input
+							style="width: 300px;" type="text" name="notice_Title"
 							class="bordered-input" placeholder="제목을 입력해 주세요" /></td>
 					</tr>
 					<tr>
-						<th width="10%" class="text-center fg lb fw"
-							style="vertical-align: middle; background-color: #C0C0C0;">공지
-							내용</th>
-						<td colspan="4" class="text-left fg" valign="top" height="200">
-							<pre class="fgl"
-								style="white-space: pre-wrap; border: none; background-color: white;">
-								<textarea cols="80" rows="8" name="notice_Content"
-									placeholder="내용을 입력해 주세요" class="bordered-input"
-									style="width: 100%; height: 100%; padding: 0; margin: 0;"></textarea>
-							</pre>
+						<th width="20%" class="text-center fg lb fw"
+							style="vertical-align: middle; background-color: #C0C0C0;">내용</th>
+						<td colspan="4" class="text-left fg" valign="top" height="200"
+							style="padding-left: 13px;"><textarea cols="80" rows="8"
+								name="notice_Content" placeholder="내용을 입력해 주세요"
+								class="bordered-input"
+								style="width: 300px; height: 300px; padding: 0; margin: 0;"></textarea>
 						</td>
 					</tr>
 					<tr>
-						<td align="right">이미지파일 첨부:</td>
+						<th width="20%" class="text-center fg lb fw"
+							style="vertical-align: middle; background-color: #C0C0C0;">이미지<br>파일<br>첨부</th>
 						<td><input type="file" name="imageFileName"
 							onchange="readURL(this);" /></td>
-						<td><img id="preview" src="#" width=200 height=200 /></td>
-						<td align="right">이미지파일 첨부</td>
 						<td align="left"><input type="button" value="파일 추가"
 							onClick="fn_addFile()" /></td>
+						<td><img id="preview" src="#" width=200 height=200 /></td>
 					</tr>
 					<tr>
 						<td colspan="4"><div id="d_file"></div></td>
