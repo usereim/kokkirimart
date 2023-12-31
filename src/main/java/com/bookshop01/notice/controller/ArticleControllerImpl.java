@@ -65,9 +65,11 @@ public class ArticleControllerImpl implements ArticleController {
 		// 가져온 값을 articlesMap에 넣음
 		articlesMap.put("section", section);
 		articlesMap.put("pageNum", pageNum);
-		
+
+		// viewName에 request한 "viewName"을 String 형식으로 넣는다.
 		String viewName = (String) request.getAttribute("viewName");
-		
+
+		// MAV에 위에서 지정한 viewName을 선언하고 addObject 명령으로 articlesMap을 넣은 다음 ModelAndView를 return한다. 
 		ModelAndView mav = new ModelAndView(viewName);
 		mav.addObject("articlesMap", articlesMap);
 		return mav;
