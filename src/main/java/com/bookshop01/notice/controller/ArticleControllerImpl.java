@@ -84,7 +84,8 @@ public class ArticleControllerImpl implements ArticleController {
 		String viewName = (String) request.getAttribute("viewName");
 		HttpSession session = request.getSession();
 		MemberVO memberVO = (MemberVO)session.getAttribute("memberInfo");
-		
+
+		// 게시물 중복 조회 방지용 !!
 		// memberVO가 비어있지 않은 경우 id를 가져오도록 함
 		String id = null;
 		if(memberVO != null) {
@@ -97,6 +98,8 @@ public class ArticleControllerImpl implements ArticleController {
 		viewMap.put("member_Id", id);
 		
 //		Map articleMap = boardService.viewArticle(NOTICE_NO);
+
+		// viewMap을 articleMap에 Map형태로 넣는다.
 		Map articleMap = articleService.viewArticle(viewMap);
 		articleMap.put("removeCompleted", removeCompleted );
 		ModelAndView mav = new ModelAndView();
@@ -115,15 +118,18 @@ public class ArticleControllerImpl implements ArticleController {
 			HttpServletResponse response) throws Exception {
 		response.setContentType("text/html; charset=UTF-8");
 		String message;
+		// 엔티티 선언 및 responseHeaders 선언
 		ResponseEntity resEnt = null;
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
+			//삭제 성공시
 			//게시글 삭제 SQL을 게시글 번호(notice_No)로 작동.
 			articleService.removeArticle(notice_No);
 			//File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + notice_No);
 			//FileUtils.deleteDirectory(destDir);
 
+			//삭제 alert을 띄우고 listArticles.do를 호출함. 즉 리스트로 돌아감.
 			message = "<script>";
 			message += " alert('게시글이 삭제되었습니다.');";
 			message += " location.href='" + request.getContextPath() + "/notice/listArticles.do';";
@@ -131,6 +137,9 @@ public class ArticleControllerImpl implements ArticleController {
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 
 		} catch (Exception e) {
+			//삭제 실패시
+			//삭제 실패 alert을 띄우고 listArticles.do를 호출함. 즉 리스트로 돌아감.
+			//더불어 오류를 이클립스에서 띄우도록 printStackTrace 호출함.
 			message = "<script>";
 			message += " alert('게시글이 삭제되지 않았습니다. 오류가 발생하였습니다.');";
 			message += " location.href='" + request.getContextPath() + "/notice/listArticles.do';";
@@ -148,8 +157,11 @@ public class ArticleControllerImpl implements ArticleController {
 	public ResponseEntity addNewArticle(MultipartHttpServletRequest multipartRequest, HttpServletResponse response)
 			throws Exception {
 		multipartRequest.setCharacterEncoding("utf-8");
+
+		//imageFileName null값 초기화
 		String imageFileName = null;
 
+		// 게시글 추가와 함께 파일이 있는 경우 multipartRequest로 넣기 위해 초기화
 		Map articleMap = new HashMap();
 		Enumeration enu = multipartRequest.getParameterNames();
 		while (enu.hasMoreElements()) {
@@ -171,6 +183,8 @@ public class ArticleControllerImpl implements ArticleController {
 //		session.removeAttribute("groupNO");
 
 		// 이미지 파일 업로드를 수행
+		// if문에서 fileList가 null이 아니고 fileList.size() 가 0이 아니면 동작.
+		// 즉, 이미지 파일이 있고 크기가 0이 아니면 동작.
 		List<String> fileList = upload(multipartRequest);
 		List<ImageVO> imageFileList = new ArrayList<ImageVO>();
 		if (fileList != null && fileList.size() != 0) {
@@ -186,7 +200,7 @@ public class ArticleControllerImpl implements ArticleController {
 		ResponseEntity resEnt = null;
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		try { //게시판 번호로 temp에 저장된 이미지 파일을 글 번호 폴더를 만들어 여기에 저장토록 함.
+		try { //게시판 번호(notice_No)로 temp에 저장된 이미지 파일을 게시판 번호(Notice_No)로 생성한 폴더에 이동시킨다.
 			int notice_No = articleService.addNewArticle(articleMap);
 			if (imageFileList != null && imageFileList.size() != 0) {
 				for (ImageVO imageVO : imageFileList) {
